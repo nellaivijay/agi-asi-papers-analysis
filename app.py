@@ -13,6 +13,7 @@ from data_fetcher import AIPapersFetcher
 from classifier import AGIASIClassifier
 from ranker import PaperRanker
 from model_manager import ModelManager
+from advanced_analyzer import AdvancedAnalyzer
 
 
 # Initialize components
@@ -20,6 +21,7 @@ fetcher = AIPapersFetcher()
 model_manager = ModelManager()
 classifier = AGIASIClassifier()
 ranker = PaperRanker()
+advanced_analyzer = AdvancedAnalyzer()
 
 
 def analyze_week(year: str, week: str, model_id: str = "keyword", 
@@ -86,15 +88,25 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
             if paper.get('semantic_analysis'):
                 semantic_info = f" ({paper['semantic_analysis'].get('model_used', 'N/A')})"
             
+            # Get links
+            paper_link = paper.get('links', {}).get('paper', '')
+            tweet_link = paper.get('links', {}).get('tweet', '')
+            
+            # Create clickable links
+            paper_link_html = f'<a href="{paper_link}" target="_blank">📄 Paper</a>' if paper_link else ''
+            tweet_link_html = f'<a href="{tweet_link}" target="_blank">🐦 Tweet</a>' if tweet_link else ''
+            links_html = ' | '.join(filter(None, [paper_link_html, tweet_link_html]))
+            
             df_data.append({
                 'Rank': paper.get('rank_position', 0),
-                'Title': paper.get('title', 'Unknown')[:80],
+                'Title': paper.get('title', 'Unknown'),  # Full title
                 'Classification': paper['classification_result']['classification'],
                 'AGI Score': paper['classification_result']['agi_score'],
                 'ASI Score': paper['classification_result']['asi_score'],
                 'Combined Score': paper['classification_result']['combined_score'],
                 'Final Rank': paper.get('final_rank', 0),
-                'Model': semantic_info
+                'Model': semantic_info,
+                'Links': links_html
             })
         
         df = pd.DataFrame(df_data)
@@ -104,11 +116,14 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
         ranking_chart = create_ranking_chart(ranked_papers)
         scatter_chart = create_scatter_chart(ranked_papers)
         
-        return summary, stats_text, top_papers_text, df, classification_chart, ranking_chart, scatter_chart
+        # Generate advanced analysis report
+        advanced_report = advanced_analyzer.generate_analysis_report(ranked_papers)
+        
+        return summary, stats_text, top_papers_text, df, classification_chart, ranking_chart, scatter_chart, advanced_report
         
     except Exception as e:
         error_msg = f"Error analyzing week: {str(e)}"
-        return error_msg, "", "", None, None, None, None
+        return error_msg, "", "", None, None, None, None, ""
 
 
 def generate_weekly_summary(year: str, week: str, total_papers: int, 
@@ -167,12 +182,23 @@ def generate_top_papers_text(papers: list) -> str:
         combined_score = paper['classification_result']['combined_score']
         final_rank = paper.get('final_rank', 0)
         
+        # Get links
+        paper_link = paper.get('links', {}).get('paper', '')
+        tweet_link = paper.get('links', {}).get('tweet', '')
+        
         text += f"### {i}. {title}\n"
         text += f"- **Classification**: {classification}\n"
         text += f"- **AGI Keywords**: {agi_score}\n"
         text += f"- **ASI Keywords**: {asi_score}\n"
         text += f"- **Combined Score**: {combined_score}/100\n"
-        text += f"- **Final Rank**: {final_rank}/100\n\n"
+        text += f"- **Final Rank**: {final_rank}/100\n"
+        
+        if paper_link:
+            text += f"- **📄 Paper**: [{paper_link}]({paper_link})\n"
+        if tweet_link:
+            text += f"- **🐦 Tweet**: [{tweet_link}]({tweet_link})\n"
+        
+        text += "\n"
     
     return text
 
@@ -481,6 +507,8 @@ def create_interface():
                 
                 papers_df = gr.Dataframe(label="All Papers Ranking")
                 
+                advanced_output = gr.Markdown(label="Advanced Analysis")
+                
                 # Event handlers
                 year_input.change(
                     update_week_dropdown,
@@ -492,7 +520,7 @@ def create_interface():
                     analyze_week,
                     inputs=[year_input, week_input, model_selector, use_semantic],
                     outputs=[summary_output, stats_output, top_papers_output, papers_df, 
-                             classification_chart_output, ranking_chart_output, scatter_chart_output]
+                             classification_chart_output, ranking_chart_output, scatter_chart_output, advanced_output]
                 )
             
             # Tab 2: Trend Analysis
