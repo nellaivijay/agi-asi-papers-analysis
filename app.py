@@ -8,6 +8,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime
+import os
 
 from data_fetcher import AIPapersFetcher
 from classifier import AGIASIClassifier
@@ -977,19 +978,27 @@ if __name__ == "__main__":
     print("✅ Interface created successfully")
     print("🚀 Starting web server...")
     print()
-    print("📱 Access Information:")
-    print("   Local URL: http://0.0.0.0:7860")
-    print("   Public Link: Will be generated automatically")
+    # Detect if running on Hugging Face Spaces
+    is_hugging_face_space = os.environ.get("SPACE_ID") is not None
+    
+    # Launch configuration
+    launch_kwargs = {
+        "server_name": "0.0.0.0",
+        "server_port": 7860,
+        "show_error": True,
+        "quiet": False
+    }
+    
+    # Only use share=True when not on Hugging Face Spaces
+    if not is_hugging_face_space:
+        launch_kwargs["share"] = True
+        print("   Public Link: Will be generated automatically")
+    else:
+        print("   Public Link: Available via Hugging Face Space URL")
+    
     print()
     print("🎓 Educational Purpose: AGI/ASI research tracking and analysis")
     print("=" * 60)
     print()
     
-    # Launch with share=True for automatic public link generation
-    demo.launch(
-        server_name="0.0.0.0",
-        server_port=7860,
-        share=True,
-        show_error=True,
-        quiet=False
-    )
+    demo.launch(**launch_kwargs)
