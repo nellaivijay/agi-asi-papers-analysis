@@ -623,17 +623,12 @@ def create_interface():
         font_mono=gr.themes.GoogleFont("JetBrains Mono"),
     ).set(
         # Background colors
-        body_background_fill="*background_fill_primary",
         background_fill_primary="rgba(255, 255, 255, 0.8)",
         background_fill_secondary="rgba(249, 250, 251, 0.8)",
         
         # Border colors
         border_color_primary="rgba(99, 102, 241, 0.2)",
         border_color_accent="rgba(99, 102, 241, 0.4)",
-        
-        # Text colors
-        body_text_color="*text_primary",
-        body_text_color_secondary="*text_secondary",
         
         # Button colors
         button_primary_background_fill="*primary_500",
