@@ -67,6 +67,55 @@ Papers are ranked using a composite score:
 - Recursive self-improvement, intelligence explosion
 - Singularity, transformative AI
 
+## 🚀 Setup Instructions
+
+### Option 1: Deploy to Hugging Face Spaces
+
+1. **Create Hugging Face Space**:
+   - Go to https://huggingface.co/new-space
+   - Name: `agi-asi-papers-analysis`
+   - SDK: Gradio
+   - Python: 3.10
+   - License: MIT
+   - Click "Create Space"
+
+2. **Upload Files**:
+   ```bash
+   # Clone your new Space
+   git clone https://huggingface.co/spaces/YOUR_USERNAME/agi-asi-papers-analysis
+   cd agi-asi-papers-analysis
+   
+   # Copy all files from this project
+   # (app.py, classifier.py, data_fetcher.py, ranker.py, requirements.txt, README.md)
+   
+   # Commit and push
+   git add .
+   git commit -m "Initial commit"
+   git push
+   ```
+
+3. **Access the Space**:
+   - Your Space will be available at: https://huggingface.co/spaces/YOUR_USERNAME/agi-asi-papers-analysis
+
+### Option 2: Deploy to GitHub
+
+1. **Create GitHub Repository**:
+   - Go to https://github.com/new
+   - Repository name: `agi-asi-papers-analysis`
+   - Description: "AGI/ASI Papers Analysis from AI-Papers-of-the-Week"
+   - License: MIT
+   - Click "Create repository"
+
+2. **Push to GitHub**:
+   ```bash
+   git remote add origin https://github.com/YOUR_USERNAME/agi-asi-papers-analysis.git
+   git branch -M main
+   git push -u origin main
+   ```
+
+3. **Deploy to Hugging Face from GitHub**:
+   - You can connect your GitHub repository to Hugging Face Spaces for automatic deployment
+
 ## 🎓 Educational Purpose
 
 This project is created for **educational purposes only** to demonstrate:
