@@ -4,12 +4,21 @@ Classifies AI papers by AGI (Artificial General Intelligence) and ASI (Artificia
 """
 
 from typing import Dict, List
+from model_manager import ModelManager
 
 
 class AGIASIClassifier:
     """Classify papers by AGI/ASI relevance using keyword analysis"""
     
-    def __init__(self):
+    def __init__(self, use_semantic: bool = False, model_id: str = "keyword"):
+        # Initialize model manager for semantic analysis
+        self.model_manager = ModelManager()
+        self.use_semantic = use_semantic
+        self.model_id = model_id
+        
+        if use_semantic:
+            self.model_manager.set_model(model_id)
+        
         # AGI (Artificial General Intelligence) keywords
         self.agi_keywords = [
             "general intelligence",
@@ -137,11 +146,16 @@ class AGIASIClassifier:
         asi_score = self.calculate_keyword_score(combined_text, self.asi_keywords)
         related_score = self.calculate_keyword_score(combined_text, self.related_keywords)
         
-        # Determine classification
-        classification = self.determine_classification(agi_score, asi_score, related_score)
+        # Perform semantic analysis if enabled
+        semantic_result = None
+        if self.use_semantic:
+            semantic_result = self.model_manager.analyze_paper_semantic(paper_data, self.model_id)
         
-        # Calculate combined relevance score
-        combined_score = self.calculate_combined_score(agi_score, asi_score, related_score)
+        # Determine classification
+        classification = self.determine_classification(agi_score, asi_score, related_score, semantic_result)
+        
+        # Calculate combined relevance score (incorporating semantic if available)
+        combined_score = self.calculate_combined_score(agi_score, asi_score, related_score, semantic_result)
         
         return {
             'classification': classification['level'],
@@ -152,7 +166,8 @@ class AGIASIClassifier:
             'combined_score': combined_score,
             'matched_agi_keywords': self.find_matched_keywords(combined_text, self.agi_keywords),
             'matched_asi_keywords': self.find_matched_keywords(combined_text, self.asi_keywords),
-            'matched_related_keywords': self.find_matched_keywords(combined_text, self.related_keywords)
+            'matched_related_keywords': self.find_matched_keywords(combined_text, self.related_keywords),
+            'semantic_analysis': semantic_result
         }
     
     def calculate_keyword_score(self, text: str, keywords: List[str]) -> int:
@@ -180,7 +195,8 @@ class AGIASIClassifier:
                 matched.append(keyword)
         return matched
     
-    def determine_classification(self, agi_score: int, asi_score: int, related_score: int) -> Dict:
+    def determine_classification(self, agi_score: int, asi_score: int, related_score: int, 
+                                 semantic_result: Dict = None) -> Dict:
         """
         Determine classification level based on scores
         
@@ -188,6 +204,15 @@ class AGIASIClassifier:
             Dictionary with classification level and reasoning
         """
         max_core_score = max(agi_score, asi_score)
+        
+        # If semantic analysis is available, use it to enhance classification
+        if semantic_result and semantic_result.get("semantic_relevance", 0) > 70:
+            # High semantic relevance boosts classification
+            if max_core_score >= 1:
+                return {
+                    'level': "Core AGI/ASI",
+                    'reason': f"High semantic relevance ({semantic_result['semantic_relevance']}) with {max_core_score} core AGI/ASI keyword matches"
+                }
         
         if max_core_score >= 3:
             return {
@@ -221,7 +246,8 @@ class AGIASIClassifier:
                 'reason': "No significant AGI/ASI relevance detected"
             }
     
-    def calculate_combined_score(self, agi_score: int, asi_score: int, related_score: int) -> float:
+    def calculate_combined_score(self, agi_score: int, asi_score: int, related_score: int, 
+                                  semantic_result: Dict = None) -> float:
         """
         Calculate combined relevance score (0-100 scale)
         
@@ -229,11 +255,17 @@ class AGIASIClassifier:
         - AGI keywords: 3.0 (most important)
         - ASI keywords: 3.0 (most important)
         - Related keywords: 1.0 (contextual)
+        - Semantic analysis: 2.0 (if available)
         """
         weighted_score = (agi_score * 3.0) + (asi_score * 3.0) + (related_score * 1.0)
         
-        # Normalize to 0-100 scale (assuming max reasonable score is ~30)
-        normalized_score = min(weighted_score * 3.33, 100)
+        # Add semantic score if available
+        if semantic_result and semantic_result.get("semantic_relevance"):
+            semantic_score = semantic_result["semantic_relevance"]
+            weighted_score += (semantic_score / 100) * 20.0  # Add up to 20 points from semantic
+        
+        # Normalize to 0-100 scale (assuming max reasonable score is ~50 with semantic)
+        normalized_score = min(weighted_score * 2.0, 100)
         
         return round(normalized_score, 2)
     

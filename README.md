@@ -21,11 +21,21 @@ This tool helps researchers, students, and AI safety enthusiasts track and analy
 
 ## 🚀 Features
 
+### **Multiple AI Model Support**
+- **Keyword-Based** (Free): Fast pattern matching, no setup required
+- **OpenAI GPT** (Paid): Advanced semantic understanding with GPT-4/GPT-3.5
+- **Anthropic Claude** (Paid): Sophisticated reasoning with Claude models
+- **Ollama** (Free, Local): Privacy-focused local models
+- **Hugging Face** (Free Tier): Access to open-source models
+
 ### **Weekly Analysis**
 - Analyze papers from any week (2023-2026)
-- Automatic AGI/ASI classification using keyword analysis
+- Hybrid classification (keyword + semantic analysis)
 - Multi-criteria ranking (relevance, novelty, impact)
-- Detailed statistics and insights
+- Interactive visualizations:
+  - Classification distribution pie chart
+  - Ranking scores bar chart
+  - Relevance vs novelty scatter plot
 
 ### **Trend Analysis**
 - Track AGI/ASI research trends over time
@@ -34,9 +44,9 @@ This tool helps researchers, students, and AI safety enthusiasts track and analy
 - Compare research patterns across years
 
 ### **Classification System**
-- **Core AGI/ASI**: Direct focus on AGI/ASI topics
-- **Strongly Related**: Significant AGI/ASI implications  
-- **Tangentially Related**: Some AGI/ASI relevance
+- **Core AGI/ASI**: Direct focus on AGI/ASI topics (3+ keyword matches)
+- **Strongly Related**: Significant AGI/ASI implications (2 keyword matches)
+- **Tangentially Related**: Some AGI/ASI relevance (1+ keyword matches)
 - **Not Related**: No clear AGI/ASI connection
 
 ### **Ranking Methodology**
@@ -45,13 +55,27 @@ Papers are ranked using a composite score:
 - **Novelty** (30%): Keyword diversity and innovation potential
 - **Impact** (20%): Classification level and potential impact
 
+### **Model Comparison**
+- Compare different AI models side-by-side
+- Understand trade-offs between speed, accuracy, and cost
+- Get recommendations for different use cases
+
 ## 📊 How It Works
 
 1. **Data Fetching**: Automatically fetches weekly reports from AI-Papers-of-the-Week GitHub repository
-2. **Classification**: Uses keyword matching to identify AGI/ASI-related papers
-3. **Scoring**: Calculates relevance scores based on keyword density and semantic analysis
-4. **Ranking**: Ranks papers by composite score considering multiple criteria
-5. **Analysis**: Provides statistics, trends, and insights
+2. **Model Selection**: Choose from keyword-based or AI-powered semantic analysis
+3. **Classification**: Uses keyword matching and/or AI models to identify AGI/ASI-related papers
+4. **Scoring**: Calculates relevance scores based on keyword density and semantic analysis
+5. **Ranking**: Ranks papers by composite score considering multiple criteria
+6. **Visualization**: Provides interactive charts and detailed insights
+
+## 📚 Documentation
+
+- **[Installation Guide](INSTALLATION.md)** - Step-by-step setup instructions
+- **[Deployment Guide](DEPLOYMENT.md)** - Deployment options (Hugging Face, Docker, Cloud)
+- **[Concept Guide](CONCEPT.md)** - System architecture and methodology
+- **[How It Works](HOW_IT_WORKS.md)** - Detailed technical explanation
+- **[Feature Ideas](FEATURES.md)** - Future enhancements and roadmap
 
 ## 🏷️ AGI/ASI Keywords
 
@@ -67,54 +91,76 @@ Papers are ranked using a composite score:
 - Recursive self-improvement, intelligence explosion
 - Singularity, transformative AI
 
-## 🚀 Setup Instructions
+## 🚀 Quick Start
 
-### Option 1: Deploy to Hugging Face Spaces
+### Local Installation
 
-1. **Create Hugging Face Space**:
-   - Go to https://huggingface.co/new-space
-   - Name: `agi-asi-papers-analysis`
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/agi-asi-papers-analysis.git
+cd agi-asi-papers-analysis
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the application
+python app.py
+```
+
+### Using AI Models (Optional)
+
+To use semantic analysis with AI models, set up API keys:
+
+```bash
+# OpenAI
+export OPENAI_API_KEY=your_key_here
+
+# Anthropic
+export ANTHROPIC_API_KEY=your_key_here
+
+# Hugging Face
+export HUGGINGFACE_API_KEY=your_key_here
+```
+
+For Ollama (local models), install from https://ollama.ai and run:
+```bash
+ollama serve
+ollama pull llama2
+```
+
+## 🚀 Deployment
+
+### Hugging Face Spaces (Recommended)
+
+1. Create a new Space at https://huggingface.co/new-space
+2. Choose:
    - SDK: Gradio
    - Python: 3.10
    - License: MIT
-   - Click "Create Space"
+3. Clone the Space and push your code
+4. Add environment variables in Space Settings for API keys
 
-2. **Upload Files**:
-   ```bash
-   # Clone your new Space
-   git clone https://huggingface.co/spaces/YOUR_USERNAME/agi-asi-papers-analysis
-   cd agi-asi-papers-analysis
-   
-   # Copy all files from this project
-   # (app.py, classifier.py, data_fetcher.py, ranker.py, requirements.txt, README.md)
-   
-   # Commit and push
-   git add .
-   git commit -m "Initial commit"
-   git push
-   ```
+See [Deployment Guide](DEPLOYMENT.md) for detailed instructions.
 
-3. **Access the Space**:
-   - Your Space will be available at: https://huggingface.co/spaces/YOUR_USERNAME/agi-asi-papers-analysis
+### Docker
 
-### Option 2: Deploy to GitHub
+```bash
+# Build image
+docker build -t agi-asi-analysis .
 
-1. **Create GitHub Repository**:
-   - Go to https://github.com/new
-   - Repository name: `agi-asi-papers-analysis`
-   - Description: "AGI/ASI Papers Analysis from AI-Papers-of-the-Week"
-   - License: MIT
-   - Click "Create repository"
+# Run container
+docker run -p 7860:7860 \
+  -e OPENAI_API_KEY=your_key \
+  agi-asi-analysis
+```
 
-2. **Push to GitHub**:
-   ```bash
-   git remote add origin https://github.com/YOUR_USERNAME/agi-asi-papers-analysis.git
-   git branch -M main
-   git push -u origin main
-   ```
+### Cloud Deployment
 
-3. **Deploy to Hugging Face from GitHub**:
-   - You can connect your GitHub repository to Hugging Face Spaces for automatic deployment
+See [Deployment Guide](DEPLOYMENT.md) for AWS, GCP, Azure, and Heroku instructions.
 
 ## 🎓 Educational Purpose
 
@@ -136,7 +182,8 @@ All papers are sourced from the [AI-Papers-of-the-Week](https://github.com/dair-
 - **Backend**: Python 3.10
 - **Data Processing**: Pandas, NumPy
 - **Visualization**: Plotly
-- **Data Source**: GitHub API
+- **AI Models**: OpenAI, Anthropic, Ollama, Hugging Face
+- **Data Source**: GitHub API (AI-Papers-of-the-Week)
 
 ## 🔗 Related Resources
 
