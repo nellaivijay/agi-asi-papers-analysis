@@ -973,9 +973,15 @@ if __name__ == "__main__":
     print("=" * 60)
     print()
     
-    demo = create_interface()
+    try:
+        demo = create_interface()
+        print("✅ Interface created successfully")
+    except Exception as e:
+        print(f"❌ Error creating interface: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
     
-    print("✅ Interface created successfully")
     print("🚀 Starting web server...")
     print()
     # Detect if running on Hugging Face Spaces
@@ -1001,4 +1007,10 @@ if __name__ == "__main__":
     print("=" * 60)
     print()
     
-    demo.launch(**launch_kwargs)
+    try:
+        demo.launch(**launch_kwargs)
+    except Exception as e:
+        print(f"❌ Error launching application: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
