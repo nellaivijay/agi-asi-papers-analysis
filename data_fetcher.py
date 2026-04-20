@@ -86,48 +86,48 @@ class AIPapersFetcher:
         papers = []
         
         # The AI-Papers-of-the-Week format uses table format with paper titles
-        # Pattern: "| 1) **Paper Title** - Description"
+        # Pattern: "| 1) **Paper Title** - Description | [Paper](url), [Tweet](url) |"
         lines = content.split('\n')
         
-        current_paper = None
         for line in lines:
             line = line.strip()
             
-            # Check if this is a new paper entry (starts with |, number, ), **)
-            # Pattern matches: "| 1) **Neural Computers** - ..." or "1) **Paper Title** - ..."
+            # Check if this is a paper entry (starts with |, number, ), **)
             paper_match = re.match(r'^\|?\s*\d+\)\s*\*\*(.+?)\*\*', line)
             if paper_match:
-                # Save previous paper if exists
-                if current_paper:
-                    papers.append(current_paper)
-                
-                # Start new paper
+                # Extract title
                 title = paper_match.group(1).strip()
-                current_paper = {
+                
+                # Extract the full paper content (everything between the ** and the | before links)
+                # Pattern: "**Title** - Description... | [Paper](url), [Tweet](url) |"
+                content_match = re.search(r'\*\*.+?\*\*\s*(.+?)\s*\|', line)
+                if content_match:
+                    summary = content_match.group(1).strip()
+                else:
+                    summary = line
+                
+                # Extract links from the end of the line
+                paper_link = ''
+                tweet_link = ''
+                
+                paper_match = re.search(r'\[Paper\]\(([^)]+)\)', line)
+                if paper_match:
+                    paper_link = paper_match.group(1)
+                
+                tweet_match = re.search(r'\[Tweet\]\(([^)]+)\)', line)
+                if tweet_match:
+                    tweet_link = tweet_match.group(1)
+                
+                paper = {
                     'title': title,
-                    'summary': '',
-                    'links': {},
+                    'summary': summary,
+                    'links': {
+                        'paper': paper_link,
+                        'tweet': tweet_link
+                    },
                     'full_entry': line
                 }
-            elif current_paper:
-                # Add content to current paper
-                current_paper['summary'] += line + ' '
-                current_paper['full_entry'] += '\n' + line
-                
-                # Extract links
-                if '[Paper]' in line:
-                    paper_match = re.search(r'\[Paper\]\(([^)]+)\)', line)
-                    if paper_match:
-                        current_paper['links']['paper'] = paper_match.group(1)
-                
-                if '[Tweet]' in line:
-                    tweet_match = re.search(r'\[Tweet\]\(([^)]+)\)', line)
-                    if tweet_match:
-                        current_paper['links']['tweet'] = tweet_match.group(1)
-        
-        # Don't forget the last paper
-        if current_paper:
-            papers.append(current_paper)
+                papers.append(paper)
         
         return papers
     
