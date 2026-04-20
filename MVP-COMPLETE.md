@@ -117,7 +117,30 @@ The complete MVP is located in: `/home/ramdov/projects/agi-asi-papers-analysis/`
 
 3. **Deploy to Hugging Face from GitHub** (optional)
 
-## 🧪 **Testing the MVP**
+## 🧪 **Testing Results**
+
+### **✅ Data Fetcher: WORKING**
+- Successfully fetches data from AI-Papers-of-the-Week GitHub
+- Correctly extracts 10 papers per week from 2026 data
+- Handles table format markdown parsing
+- Caching mechanism implemented
+- Error handling and retry logic working
+
+### **✅ Classifier: WORKING**
+- Successfully classifies papers by AGI/ASI relevance
+- Correctly identifies Core AGI/ASI papers (3+ keyword matches)
+- Properly calculates relevance scores
+- Handles edge cases (no matches, related keywords)
+- Statistical analysis working
+
+### **✅ Ranker: WORKING**
+- Successfully ranks papers by multiple criteria
+- Correctly calculates composite scores
+- Properly orders papers by relevance
+- Filtering by classification level working
+- Top papers selection working
+
+### **✅ All Components Tested and Functional**
 
 ### **Local Testing:**
 ```bash
