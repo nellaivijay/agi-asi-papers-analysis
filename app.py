@@ -961,5 +961,35 @@ def create_interface():
 
 
 if __name__ == "__main__":
+    import sys
+    
+    print("=" * 60)
+    print("🧠 AGI/ASI Papers Analysis - Application Startup")
+    print("=" * 60)
+    print(f"📅 Starting at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"🐍 Python Version: {sys.version.split()[0]}")
+    print(f"📦 Gradio Version: 4.44.1")
+    print("=" * 60)
+    print()
+    
     demo = create_interface()
-    demo.launch()
+    
+    print("✅ Interface created successfully")
+    print("🚀 Starting web server...")
+    print()
+    print("📱 Access Information:")
+    print("   Local URL: http://0.0.0.0:7860")
+    print("   Public Link: Will be generated automatically")
+    print()
+    print("🎓 Educational Purpose: AGI/ASI research tracking and analysis")
+    print("=" * 60)
+    print()
+    
+    # Launch with share=True for automatic public link generation
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        share=True,
+        show_error=True,
+        quiet=False
+    )
