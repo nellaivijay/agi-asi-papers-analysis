@@ -86,7 +86,7 @@ python app.py --server_name 0.0.0.0 --server_port 7860
    colorFrom: purple
    colorTo: blue
    sdk: gradio
-   sdk_version: 4.0.0
+   sdk_version: 4.44.1
    app_file: app.py
    pinned: false
    license: mit
@@ -120,7 +120,7 @@ python app.py --server_name 0.0.0.0 --server_port 7860
 For `requirements.txt` in Hugging Face Spaces, ensure:
 ```txt
 requests==2.31.0
-gradio==4.0.0
+gradio==4.44.1
 pandas==2.0.3
 numpy==1.24.3
 plotly==5.17.0
