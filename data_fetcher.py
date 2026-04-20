@@ -85,16 +85,49 @@ class AIPapersFetcher:
         """Extract individual papers from weekly content"""
         papers = []
         
-        # Split by numbered paper entries
-        paper_entries = re.split(r'\n\s*\d+\)\s*\*\*', content)
+        # The AI-Papers-of-the-Week format uses table format with paper titles
+        # Pattern: "| 1) **Paper Title** - Description"
+        lines = content.split('\n')
         
-        for entry in paper_entries[1:]:  # Skip first empty entry
-            if not entry.strip():
-                continue
+        current_paper = None
+        for line in lines:
+            line = line.strip()
+            
+            # Check if this is a new paper entry (starts with |, number, ), **)
+            # Pattern matches: "| 1) **Neural Computers** - ..." or "1) **Paper Title** - ..."
+            paper_match = re.match(r'^\|?\s*\d+\)\s*\*\*(.+?)\*\*', line)
+            if paper_match:
+                # Save previous paper if exists
+                if current_paper:
+                    papers.append(current_paper)
                 
-            paper = self.parse_paper_entry(entry)
-            if paper:
-                papers.append(paper)
+                # Start new paper
+                title = paper_match.group(1).strip()
+                current_paper = {
+                    'title': title,
+                    'summary': '',
+                    'links': {},
+                    'full_entry': line
+                }
+            elif current_paper:
+                # Add content to current paper
+                current_paper['summary'] += line + ' '
+                current_paper['full_entry'] += '\n' + line
+                
+                # Extract links
+                if '[Paper]' in line:
+                    paper_match = re.search(r'\[Paper\]\(([^)]+)\)', line)
+                    if paper_match:
+                        current_paper['links']['paper'] = paper_match.group(1)
+                
+                if '[Tweet]' in line:
+                    tweet_match = re.search(r'\[Tweet\]\(([^)]+)\)', line)
+                    if tweet_match:
+                        current_paper['links']['tweet'] = tweet_match.group(1)
+        
+        # Don't forget the last paper
+        if current_paper:
+            papers.append(current_paper)
         
         return papers
     
