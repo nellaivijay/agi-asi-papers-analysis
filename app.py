@@ -614,46 +614,10 @@ def update_week_dropdown(year: str):
 def create_interface():
     """Create the main Gradio interface"""
     
-    # Custom theme with modern colors
+    # Custom theme with modern colors (simplified for compatibility)
     custom_theme = gr.themes.Soft(
         primary_hue="indigo",
         secondary_hue="pink",
-        neutral_hue="slate",
-        font=gr.themes.GoogleFont("Inter"),
-        font_mono=gr.themes.GoogleFont("JetBrains Mono"),
-    ).set(
-        # Background colors
-        background_fill_primary="rgba(255, 255, 255, 0.8)",
-        background_fill_secondary="rgba(249, 250, 251, 0.8)",
-        
-        # Border colors
-        border_color_primary="rgba(99, 102, 241, 0.2)",
-        border_color_accent="rgba(99, 102, 241, 0.4)",
-        
-        # Button colors
-        button_primary_background_fill="*primary_500",
-        button_primary_background_fill_hover="*primary_600",
-        button_primary_text_color="white",
-        
-        # Input colors
-        input_background_fill="white",
-        input_background_fill_focus="*primary_50",
-        input_border_color="*border_color_primary",
-        input_border_color_focus="*primary_500",
-        
-        # Shadow
-        shadow_drop="0 4px 6px rgba(0, 0, 0, 0.1)",
-        block_shadow="0 4px 6px rgba(0, 0, 0, 0.05)",
-        
-        # Spacing
-        spacing_lg="2rem",
-        spacing_md="1.5rem",
-        spacing_sm="1rem",
-        
-        # Radius
-        radius_lg="12px",
-        radius_md="8px",
-        radius_sm="4px",
     )
     
     with gr.Blocks(title="AGI/ASI Papers Analysis", theme=custom_theme, css="""
