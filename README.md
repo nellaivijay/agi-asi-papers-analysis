@@ -4,7 +4,7 @@ emoji: 🧠
 colorFrom: purple
 colorTo: red
 sdk: gradio
-sdk_version: 4.44.1
+sdk_version: 4.0.0
 python_version: "3.10"
 app_file: app.py
 pinned: false
@@ -178,7 +178,7 @@ All papers are sourced from the [AI-Papers-of-the-Week](https://github.com/dair-
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: Gradio 4.44.1
+- **Frontend**: Gradio 4.0.0
 - **Backend**: Python 3.10
 - **Data Processing**: Pandas, NumPy
 - **Visualization**: Plotly

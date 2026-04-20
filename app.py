@@ -8,7 +8,6 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime
-import os
 
 from data_fetcher import AIPapersFetcher
 from classifier import AGIASIClassifier
@@ -969,7 +968,7 @@ if __name__ == "__main__":
     print("=" * 60)
     print(f"📅 Starting at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"🐍 Python Version: {sys.version.split()[0]}")
-    print(f"📦 Gradio Version: 4.44.1")
+    print(f"📦 Gradio Version: 4.0.0")
     print("=" * 60)
     print()
     
@@ -984,31 +983,16 @@ if __name__ == "__main__":
     
     print("🚀 Starting web server...")
     print()
-    # Detect if running on Hugging Face Spaces
-    is_hugging_face_space = os.environ.get("SPACE_ID") is not None
-    
-    # Launch configuration
-    launch_kwargs = {
-        "server_name": "0.0.0.0",
-        "server_port": 7860,
-        "show_error": True,
-        "quiet": False
-    }
-    
-    # Only use share=True when not on Hugging Face Spaces
-    if not is_hugging_face_space:
-        launch_kwargs["share"] = True
-        print("   Public Link: Will be generated automatically")
-    else:
-        print("   Public Link: Available via Hugging Face Space URL")
-    
-    print()
     print("🎓 Educational Purpose: AGI/ASI research tracking and analysis")
     print("=" * 60)
     print()
     
     try:
-        demo.launch(**launch_kwargs)
+        demo.launch(
+            server_name="0.0.0.0",
+            server_port=7860,
+            show_error=True
+        )
     except Exception as e:
         print(f"❌ Error launching application: {e}")
         import traceback

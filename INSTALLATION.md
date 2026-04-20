@@ -45,7 +45,7 @@ pip install -r requirements.txt
 
 The requirements include:
 - `requests==2.31.0` - For fetching data from GitHub
-- `gradio==4.44.1` - For the web interface
+- `gradio==4.0.0` - For the web interface
 - `pandas==2.0.3` - For data manipulation
 - `numpy==1.24.3` - For numerical operations
 - `plotly==5.17.0` - For visualizations
