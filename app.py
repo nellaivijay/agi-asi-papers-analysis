@@ -93,14 +93,25 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
             tweet_link = paper.get('links', {}).get('tweet', '')
             
             # Create clickable links
-            paper_link_html = f'<a href="{paper_link}" target="_blank">📄 Paper</a>' if paper_link else ''
-            tweet_link_html = f'<a href="{tweet_link}" target="_blank">🐦 Tweet</a>' if tweet_link else ''
+            paper_link_html = f'<a href="{paper_link}" target="_blank" style="color: #6366F1; text-decoration: none; font-weight: 500;">📄 Paper</a>' if paper_link else ''
+            tweet_link_html = f'<a href="{tweet_link}" target="_blank" style="color: #EC4899; text-decoration: none; font-weight: 500;">🐦 Tweet</a>' if tweet_link else ''
             links_html = ' | '.join(filter(None, [paper_link_html, tweet_link_html]))
+            
+            # Add color-coded classification badge
+            classification = paper['classification_result']['classification']
+            classification_colors = {
+                'Core AGI/ASI': '#00D4AA',
+                'Strongly Related': '#7C3AED',
+                'Tangentially Related': '#F59E0B',
+                'Not Related': '#64748B'
+            }
+            color = classification_colors.get(classification, '#64748B')
+            classification_html = f'<span style="background-color: {color}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">{classification}</span>'
             
             df_data.append({
                 'Rank': paper.get('rank_position', 0),
                 'Title': paper.get('title', 'Unknown'),  # Full title
-                'Classification': paper['classification_result']['classification'],
+                'Classification': classification_html,
                 'AGI Score': paper['classification_result']['agi_score'],
                 'ASI Score': paper['classification_result']['asi_score'],
                 'Combined Score': paper['classification_result']['combined_score'],
@@ -208,21 +219,42 @@ def create_classification_chart(stats: dict) -> go.Figure:
     labels = ['Core AGI/ASI', 'Strongly Related', 'Tangentially Related', 'Not Related']
     values = [stats['core_agi_asi'], stats['strongly_related'], 
               stats['tangentially_related'], stats['not_related']]
-    colors = ['#00CC96', '#EF553B', '#FFA15A', '#AB63FA']
+    
+    # Modern color palette
+    colors = ['#00D4AA', '#7C3AED', '#F59E0B', '#64748B']
     
     fig = go.Figure(data=[go.Pie(
         labels=labels,
         values=values,
-        marker=dict(colors=colors),
+        marker=dict(
+            colors=colors,
+            line=dict(color='white', width=2)
+        ),
         textinfo='label+percent',
         textposition='inside',
-        hole=0.3
+        textfont=dict(size=14, family='Arial'),
+        hole=0.4,
+        hovertemplate='<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>'
     )])
     
     fig.update_layout(
-        title='Paper Classification Distribution',
-        height=400,
-        showlegend=True
+        title=dict(
+            text='Paper Classification Distribution',
+            font=dict(size=20, family='Arial', color='#1E293B')
+        ),
+        height=450,
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            font=dict(size=12)
+        ),
+        paper_bgcolor='rgba(255,255,255,0.95)',
+        plot_bgcolor='rgba(255,255,255,0.95)',
+        margin=dict(t=80, b=20, l=20, r=20)
     )
     
     return fig
@@ -242,23 +274,66 @@ def create_ranking_chart(ranked_papers: list) -> go.Figure:
         x=titles,
         y=final_ranks,
         name='Final Rank Score',
-        marker=dict(color='#667eea')
+        marker=dict(
+            color='#6366F1',
+            line=dict(color='#4F46E5', width=1)
+        ),
+        text=final_ranks,
+        textposition='outside',
+        textfont=dict(size=10, color='#4F46E5'),
+        hovertemplate='<b>%{x}</b><br>Final Rank: %{y:.1f}<extra></extra>'
     ))
     
     fig.add_trace(go.Bar(
         x=titles,
         y=combined_scores,
         name='Combined Relevance',
-        marker=dict(color='#764ba2')
+        marker=dict(
+            color='#EC4899',
+            line=dict(color='#DB2777', width=1)
+        ),
+        text=combined_scores,
+        textposition='outside',
+        textfont=dict(size=10, color='#DB2777'),
+        hovertemplate='<b>%{x}</b><br>Combined Score: %{y:.1f}<extra></extra>'
     ))
     
     fig.update_layout(
-        title='Top 15 Papers: Ranking vs Relevance Scores',
-        xaxis_title='Paper Title',
-        yaxis_title='Score (0-100)',
+        title=dict(
+            text='Top 15 Papers: Ranking vs Relevance Scores',
+            font=dict(size=20, family='Arial', color='#1E293B')
+        ),
+        xaxis_title=dict(
+            text='Paper Title',
+            font=dict(size=14, family='Arial')
+        ),
+        yaxis_title=dict(
+            text='Score (0-100)',
+            font=dict(size=14, family='Arial')
+        ),
         barmode='group',
-        height=500,
-        xaxis_tickangle=-45
+        height=550,
+        xaxis_tickangle=-45,
+        xaxis=dict(
+            tickfont=dict(size=10),
+            showgrid=False
+        ),
+        yaxis=dict(
+            gridcolor='rgba(0,0,0,0.1)',
+            zerolinecolor='rgba(0,0,0,0.2)',
+            range=[0, 100]
+        ),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=12)
+        ),
+        paper_bgcolor='rgba(255,255,255,0.95)',
+        plot_bgcolor='rgba(255,255,255,0.95)',
+        margin=dict(t=80, b=100, l=60, r=20)
     )
     
     return fig
@@ -271,38 +346,86 @@ def create_scatter_chart(ranked_papers: list) -> go.Figure:
     relevance_scores = [p['ranking_scores']['relevance_score'] for p in papers_with_scores]
     novelty_scores = [p['ranking_scores']['novelty_score'] for p in papers_with_scores]
     classifications = [p['classification_result']['classification'] for p in papers_with_scores]
-    titles = [p.get('title', 'Unknown')[:30] for p in papers_with_scores]
+    titles = [p.get('title', 'Unknown')[:40] + '...' for p in papers_with_scores]
     
-    # Color by classification
+    # Modern color palette for classifications
     color_map = {
-        'Core AGI/ASI': '#00CC96',
-        'Strongly Related': '#EF553B',
-        'Tangentially Related': '#FFA15A',
-        'Not Related': '#AB63FA'
+        'Core AGI/ASI': '#00D4AA',
+        'Strongly Related': '#7C3AED',
+        'Tangentially Related': '#F59E0B',
+        'Not Related': '#64748B'
     }
-    colors = [color_map.get(c, '#AB63FA') for c in classifications]
+    colors = [color_map.get(c, '#64748B') for c in classifications]
+    
+    # Size based on impact score
+    impact_scores = [p['ranking_scores']['impact_score'] for p in papers_with_scores]
+    sizes = [max(8, min(25, s / 4)) for s in impact_scores]
     
     fig = go.Figure(data=go.Scatter(
         x=relevance_scores,
         y=novelty_scores,
         mode='markers',
         marker=dict(
-            size=10,
+            size=sizes,
             color=colors,
-            opacity=0.7
+            opacity=0.7,
+            line=dict(color='white', width=1.5)
         ),
         text=titles,
+        customdata=classifications,
         hovertemplate='<b>%{text}</b><br>' +
                      'Relevance: %{x:.1f}<br>' +
-                     'Novelty: %{y:.1f}<extra></extra>'
+                     'Novelty: %{y:.1f}<br>' +
+                     'Classification: %{customdata}<extra></extra>',
+        showlegend=False
     ))
     
+    # Add legend manually
+    for classification, color in color_map.items():
+        fig.add_trace(go.Scatter(
+            x=[None], y=[None],
+            mode='markers',
+            marker=dict(size=12, color=color, opacity=0.8),
+            name=classification,
+            showlegend=True
+        ))
+    
     fig.update_layout(
-        title='Relevance vs Novelty Analysis',
-        xaxis_title='Relevance Score',
-        yaxis_title='Novelty Score',
+        title=dict(
+            text='Relevance vs Novelty Analysis',
+            font=dict(size=20, family='Arial', color='#1E293B')
+        ),
+        xaxis_title=dict(
+            text='Relevance Score',
+            font=dict(size=14, family='Arial')
+        ),
+        yaxis_title=dict(
+            text='Novelty Score',
+            font=dict(size=14, family='Arial')
+        ),
         height=500,
-        hovermode='closest'
+        hovermode='closest',
+        xaxis=dict(
+            gridcolor='rgba(0,0,0,0.1)',
+            zerolinecolor='rgba(0,0,0,0.2)',
+            range=[0, 100]
+        ),
+        yaxis=dict(
+            gridcolor='rgba(0,0,0,0.1)',
+            zerolinecolor='rgba(0,0,0,0.2)',
+            range=[0, 100]
+        ),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=12)
+        ),
+        paper_bgcolor='rgba(255,255,255,0.95)',
+        plot_bgcolor='rgba(255,255,255,0.95)',
+        margin=dict(t=80, b=60, l=60, r=20)
     )
     
     return fig
@@ -399,14 +522,17 @@ def create_trend_chart(week_names: list, weekly_stats: list) -> go.Figure:
     # Create figure with secondary y-axis
     fig = go.Figure()
     
-    # Add relevance rate line
+    # Add relevance rate line with area fill
     fig.add_trace(go.Scatter(
         x=week_names,
         y=relevance_rates,
         mode='lines+markers',
         name='Relevance Rate (%)',
-        line=dict(color='#667eea', width=3),
-        marker=dict(size=8)
+        line=dict(color='#6366F1', width=3),
+        marker=dict(size=8, color='#6366F1', line=dict(color='white', width=1)),
+        fill='tozeroy',
+        fillcolor='rgba(99, 102, 241, 0.1)',
+        hovertemplate='<b>%{x}</b><br>Relevance Rate: %{y:.1f}%<extra></extra>'
     ))
     
     # Add AGI/ASI paper count bars
@@ -414,24 +540,63 @@ def create_trend_chart(week_names: list, weekly_stats: list) -> go.Figure:
         x=week_names,
         y=agi_asi_counts,
         name='AGI/ASI Papers',
-        marker=dict(color='#764ba2'),
+        marker=dict(
+            color='#EC4899',
+            line=dict(color='#DB2777', width=1)
+        ),
+        hovertemplate='<b>%{x}</b><br>AGI/ASI Papers: %{y}<extra></extra>',
         yaxis='y2'
     ))
     
-    # Update layout
+    # Update layout with modern styling
     fig.update_layout(
-        title='AGI/ASI Research Trends Over Time',
-        xaxis_title='Week',
-        yaxis_title='Relevance Rate (%)',
-        yaxis2_title='AGI/ASI Paper Count',
+        title=dict(
+            text='AGI/ASI Research Trends Over Time',
+            font=dict(size=20, family='Arial', color='#1E293B')
+        ),
+        xaxis_title=dict(
+            text='Week',
+            font=dict(size=14, family='Arial')
+        ),
+        yaxis_title=dict(
+            text='Relevance Rate (%)',
+            font=dict(size=14, family='Arial')
+        ),
+        yaxis2_title=dict(
+            text='AGI/ASI Paper Count',
+            font=dict(size=14, family='Arial')
+        ),
         yaxis2=dict(
             title='AGI/ASI Paper Count',
             overlaying='y',
-            side='right'
+            side='right',
+            gridcolor='rgba(0,0,0,0.1)',
+            zerolinecolor='rgba(0,0,0,0.2)'
         ),
-        legend=dict(x=0.1, y=1.1, orientation='h'),
-        height=500,
-        hovermode='x unified'
+        yaxis=dict(
+            gridcolor='rgba(0,0,0,0.1)',
+            zerolinecolor='rgba(0,0,0,0.2)',
+            range=[0, 100]
+        ),
+        xaxis=dict(
+            gridcolor='rgba(0,0,0,0.1)',
+            zerolinecolor='rgba(0,0,0,0.2)',
+            tickangle=-45,
+            tickfont=dict(size=10)
+        ),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=12)
+        ),
+        height=550,
+        hovermode='x unified',
+        paper_bgcolor='rgba(255,255,255,0.95)',
+        plot_bgcolor='rgba(255,255,255,0.95)',
+        margin=dict(t=80, b=100, l=60, r=60)
     )
     
     return fig
@@ -449,16 +614,102 @@ def update_week_dropdown(year: str):
 def create_interface():
     """Create the main Gradio interface"""
     
-    with gr.Blocks(title="AGI/ASI Papers Analysis", theme=gr.themes.Soft()) as demo:
+    # Custom theme with modern colors
+    custom_theme = gr.themes.Soft(
+        primary_hue="indigo",
+        secondary_hue="pink",
+        neutral_hue="slate",
+        font=gr.themes.GoogleFont("Inter"),
+        font_mono=gr.themes.GoogleFont("JetBrains Mono"),
+    ).set(
+        # Background colors
+        body_background_fill="*background_fill_primary",
+        background_fill_primary="rgba(255, 255, 255, 0.8)",
+        background_fill_secondary="rgba(249, 250, 251, 0.8)",
         
-        # Header
+        # Border colors
+        border_color_primary="rgba(99, 102, 241, 0.2)",
+        border_color_accent="rgba(99, 102, 241, 0.4)",
+        
+        # Text colors
+        body_text_color="*text_primary",
+        body_text_color_secondary="*text_secondary",
+        
+        # Button colors
+        button_primary_background_fill="*primary_500",
+        button_primary_background_fill_hover="*primary_600",
+        button_primary_text_color="white",
+        
+        # Input colors
+        input_background_fill="white",
+        input_background_fill_focus="*primary_50",
+        input_border_color="*border_color_primary",
+        input_border_color_focus="*primary_500",
+        
+        # Shadow
+        shadow_drop="0 4px 6px rgba(0, 0, 0, 0.1)",
+        block_shadow="0 4px 6px rgba(0, 0, 0, 0.05)",
+        
+        # Spacing
+        spacing_lg="2rem",
+        spacing_md="1.5rem",
+        spacing_sm="1rem",
+        
+        # Radius
+        radius_lg="12px",
+        radius_md="8px",
+        radius_sm="4px",
+    )
+    
+    with gr.Blocks(title="AGI/ASI Papers Analysis", theme=custom_theme, css="""
+        .gradio-container {
+            max-width: 1400px !important;
+        }
+        .plot-container {
+            background: white !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+        .markdown h1 {
+            color: #1E293B !important;
+            font-size: 2.5rem !important;
+            font-weight: 700 !important;
+            margin-bottom: 1rem !important;
+        }
+        .markdown h2 {
+            color: #334155 !important;
+            font-size: 1.8rem !important;
+            font-weight: 600 !important;
+            margin-top: 1.5rem !important;
+        }
+        .markdown h3 {
+            color: #475569 !important;
+            font-size: 1.4rem !important;
+            font-weight: 600 !important;
+        }
+        .tab-nav {
+            border-radius: 12px !important;
+        }
+        .tab-button {
+            font-weight: 500 !important;
+        }
+    """) as demo:
+        
+        # Header with enhanced styling
         gr.Markdown("""
-        # 🧠 AGI/ASI Papers Analysis
-        
-        Analyze AI papers from [AI-Papers-of-the-Week](https://github.com/dair-ai/AI-Papers-of-the-Week) 
-        for AGI (Artificial General Intelligence) and ASI (Artificial Super Intelligence) relevance.
-        
-        **🎓 Educational Purpose**: This tool is created for educational purposes to demonstrate AGI/ASI research tracking and analysis.
+        <div style="text-align: center; padding: 2rem 0;">
+            <h1 style="font-size: 3rem; font-weight: 700; color: #1E293B; margin-bottom: 0.5rem;">
+                🧠 AGI/ASI Papers Analysis
+            </h1>
+            <p style="font-size: 1.2rem; color: #64748B; margin-bottom: 1.5rem;">
+                Analyze AI papers from <a href="https://github.com/dair-ai/AI-Papers-of-the-Week" target="_blank" style="color: #6366F1; text-decoration: none; font-weight: 500;">AI-Papers-of-the-Week</a> 
+                for AGI (Artificial General Intelligence) and ASI (Artificial Super Intelligence) relevance.
+            </p>
+            <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1)); 
+                        padding: 1rem; border-radius: 12px; border-left: 4px solid #6366F1;">
+                <strong style="color: #6366F1;">🎓 Educational Purpose:</strong> This tool is created for educational purposes to demonstrate AGI/ASI research tracking and analysis.
+            </div>
+        </div>
         """)
         
         with gr.Tabs():
@@ -505,7 +756,14 @@ def create_interface():
                     scatter_chart_output = gr.Plot(label="Relevance vs Novelty")
                     top_papers_output = gr.Markdown(label="Top Papers")
                 
-                papers_df = gr.Dataframe(label="All Papers Ranking")
+                papers_df = gr.Dataframe(
+            label="All Papers Ranking",
+            datatype=["number", "str", "markdown", "number", "number", "number", "number", "str", "markdown"],
+            wrap=True,
+            column_widths=["80px", "400px", "150px", "80px", "80px", "80px", "80px", "100px", "120px"],
+            headers=["Rank", "Title", "Classification", "AGI Score", "ASI Score", "Combined Score", "Final Rank", "Model", "Links"],
+            interactive=False
+        )
                 
                 advanced_output = gr.Markdown(label="Advanced Analysis")
                 
