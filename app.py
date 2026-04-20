@@ -840,6 +840,26 @@ def create_interface():
                 - Requires HUGGINGFACE_API_KEY
                 - Good balance of quality and cost
                 
+                **Cohere Command (Paid, Free Tier)**
+                - Cohere's Command models for text analysis
+                - Requires COHERE_API_KEY
+                - Fast and reliable performance
+                
+                **Google Gemini (Paid, Free Tier)**
+                - Google's Gemini models for semantic understanding
+                - Requires GOOGLE_API_KEY
+                - Cutting-edge multimodal capabilities
+                
+                **Together AI (Paid, Free Tier)**
+                - Together AI's hosted open-source models
+                - Requires TOGETHER_API_KEY
+                - Access to latest open-source models
+                
+                **Replicate (Pay-per-use)**
+                - Replicate's hosted models API
+                - Requires REPLICATE_API_KEY
+                - Wide variety of models available
+                
                 ### 🔍 Methodology
                 - **Keyword Analysis**: Papers are classified using AGI/ASI keyword matching
                 - **Semantic Scoring**: AI models provide deeper understanding when enabled
@@ -871,6 +891,10 @@ def create_interface():
                 - OpenAI: `export OPENAI_API_KEY=your_key_here`
                 - Anthropic: `export ANTHROPIC_API_KEY=your_key_here`
                 - Hugging Face: `export HUGGINGFACE_API_KEY=your_key_here`
+                - Cohere: `export COHERE_API_KEY=your_key_here`
+                - Google: `export GOOGLE_API_KEY=your_key_here`
+                - Together AI: `export TOGETHER_API_KEY=your_key_here`
+                - Replicate: `export REPLICATE_API_KEY=your_key_here`
                 
                 For Ollama, install from https://ollama.ai and run: `ollama serve`
                 """)
@@ -882,13 +906,17 @@ def create_interface():
                 gr.Markdown("""
                 ### Model Features Comparison
                 
-                | Model | Cost | Speed | Accuracy | Privacy | Setup |
-                |-------|------|-------|----------|---------|-------|
-                | Keyword | Free | ⚡⚡⚡ | ⭐⭐ | 🔒🔒🔒 | None |
-                | OpenAI GPT | Paid | ⚡⚡ | ⭐⭐⭐⭐⭐ | 🔒 | API Key |
-                | Anthropic Claude | Paid | ⚡⚡ | ⭐⭐⭐⭐⭐ | 🔒 | API Key |
-                | Ollama | Free | ⚡ | ⭐⭐⭐⭐ | 🔒🔒🔒 | Local Install |
-                | Hugging Face | Free Tier | ⚡⚡ | ⭐⭐⭐⭐ | 🔒 | API Key |
+                | Model | Cost | Speed | Accuracy | Privacy | API Key Required | Available Models |
+                |-------|------|-------|----------|---------|------------------|------------------|
+                | Keyword | Free | ⚡⚡⚡ | ⭐⭐ | 🔒🔒🔒 | No | N/A |
+                | OpenAI GPT | Paid | ⚡⚡ | ⭐⭐⭐⭐⭐ | 🔒 | Yes | GPT-4, GPT-4 Turbo, GPT-3.5, GPT-4o |
+                | Anthropic Claude | Paid | ⚡⚡ | ⭐⭐⭐⭐⭐ | 🔒 | Yes | Claude Opus, Sonnet, Haiku, 3.5 Sonnet |
+                | Ollama | Free | ⚡ | ⭐⭐⭐⭐ | 🔒🔒🔒 | No | Llama2, Llama3, Mistral, Phi3, Gemma, Qwen |
+                | Hugging Face | Free Tier | ⚡⚡ | ⭐⭐⭐⭐ | 🔒 | Yes | Llama 2/3, Mistral, Gemma, Phi-3, Qwen |
+                | Cohere Command | Paid (Free Tier) | ⚡⚡ | ⭐⭐⭐⭐ | 🔒 | Yes | Command, Command Light, Command Nightly |
+                | Google Gemini | Paid (Free Tier) | ⚡⚡ | ⭐⭐⭐⭐⭐ | 🔒 | Yes | Gemini Pro, Gemini Pro Vision, Gemini 1.5 |
+                | Together AI | Paid (Free Tier) | ⚡⚡ | ⭐⭐⭐⭐ | 🔒 | Yes | Llama 2 70B, Mixtral 8x7B, RedPajama |
+                | Replicate | Pay-per-use | ⚡ | ⭐⭐⭐⭐ | 🔒 | Yes | Llama 2 70B, Mixtral 8x7B, Stable Diffusion |
                 
                 ### Recommendations
                 
@@ -896,21 +924,70 @@ def create_interface():
                 - Fastest option
                 - No setup required
                 - Good for high-volume screening
+                - Best for initial paper triage
                 
                 **For Deep Analysis**: Use OpenAI GPT or Anthropic Claude
                 - Best semantic understanding
                 - Handles nuance well
                 - Worth the cost for important research
+                - Excellent for complex technical papers
                 
                 **For Privacy**: Use Ollama
                 - Data stays on your machine
                 - Free to use
                 - Requires local setup
+                - Best for sensitive research
                 
-                **For Budget-Conscious**: Use Hugging Face
+                **For Budget-Conscious**: Use Hugging Face or Cohere
                 - Free tier available
                 - Good quality models
                 - Simple API key setup
+                - Good balance of cost and quality
+                
+                **For Latest Models**: Use Google Gemini
+                - Cutting-edge capabilities
+                - Multimodal support
+                - Free tier available
+                - Excellent for modern research
+                
+                **For Open-Source**: Use Together AI or Replicate
+                - Access to latest open-source models
+                - Pay-per-use pricing
+                - Wide model selection
+                - Best for experimentation
+                
+                ### API Key Setup
+                
+                To use semantic analysis, set the following environment variables:
+                
+                ```bash
+                # OpenAI
+                export OPENAI_API_KEY=your_key_here
+                
+                # Anthropic
+                export ANTHROPIC_API_KEY=your_key_here
+                
+                # Hugging Face
+                export HUGGINGFACE_API_KEY=your_key_here
+                
+                # Cohere
+                export COHERE_API_KEY=your_key_here
+                
+                # Google
+                export GOOGLE_API_KEY=your_key_here
+                
+                # Together AI
+                export TOGETHER_API_KEY=your_key_here
+                
+                # Replicate
+                export REPLICATE_API_KEY=your_key_here
+                ```
+                
+                For Ollama (local models), install from https://ollama.ai and run:
+                ```bash
+                ollama serve
+                ollama pull llama3
+                ```
                 """)
         
         # Footer

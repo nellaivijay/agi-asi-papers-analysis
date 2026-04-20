@@ -18,39 +18,104 @@ class ModelManager:
                 "name": "Keyword-Based",
                 "description": "Fast keyword matching without AI models",
                 "requires_api_key": False,
-                "cost": "Free"
+                "cost": "Free",
+                "speed": "Fastest",
+                "accuracy": "Basic"
             },
             "openai": {
                 "name": "OpenAI GPT",
                 "description": "GPT-4/GPT-3.5 for semantic understanding",
                 "requires_api_key": True,
                 "cost": "Paid",
+                "speed": "Fast",
+                "accuracy": "Excellent",
                 "api_key_env": "OPENAI_API_KEY",
-                "models": ["gpt-4", "gpt-3.5-turbo"]
+                "models": ["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo", "gpt-4o"]
             },
             "anthropic": {
                 "name": "Anthropic Claude",
                 "description": "Claude for advanced semantic analysis",
                 "requires_api_key": True,
                 "cost": "Paid",
+                "speed": "Fast",
+                "accuracy": "Excellent",
                 "api_key_env": "ANTHROPIC_API_KEY",
-                "models": ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]
+                "models": ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku", "claude-3.5-sonnet"]
             },
             "ollama": {
                 "name": "Ollama (Local)",
                 "description": "Local models via Ollama (free, requires installation)",
                 "requires_api_key": False,
                 "cost": "Free",
+                "speed": "Medium",
+                "accuracy": "Good",
                 "base_url": "http://localhost:11434",
-                "models": ["llama2", "mistral", "neural-chat"]
+                "models": ["llama2", "llama3", "mistral", "neural-chat", "codellama", "phi3", "gemma", "qwen"]
             },
             "huggingface": {
                 "name": "Hugging Face Inference",
                 "description": "Hugging Face inference API for various models",
                 "requires_api_key": True,
                 "cost": "Free tier available",
+                "speed": "Medium",
+                "accuracy": "Good",
                 "api_key_env": "HUGGINGFACE_API_KEY",
-                "models": ["meta-llama/Llama-2-7b-chat-hf", "mistralai/Mistral-7B-Instruct-v0.2"]
+                "models": [
+                    "meta-llama/Llama-2-7b-chat-hf",
+                    "meta-llama/Llama-3-8b-chat-hf",
+                    "mistralai/Mistral-7B-Instruct-v0.2",
+                    "google/gemma-7b-it",
+                    "microsoft/Phi-3-mini-4k-instruct",
+                    "Qwen/Qwen2-7B-Instruct"
+                ]
+            },
+            "cohere": {
+                "name": "Cohere Command",
+                "description": "Cohere's Command models for text analysis",
+                "requires_api_key": True,
+                "cost": "Paid (free tier available)",
+                "speed": "Fast",
+                "accuracy": "Good",
+                "api_key_env": "COHERE_API_KEY",
+                "models": ["command", "command-light", "command-nightly"]
+            },
+            "google": {
+                "name": "Google Gemini",
+                "description": "Google's Gemini models for semantic understanding",
+                "requires_api_key": True,
+                "cost": "Paid (free tier available)",
+                "speed": "Fast",
+                "accuracy": "Excellent",
+                "api_key_env": "GOOGLE_API_KEY",
+                "models": ["gemini-pro", "gemini-pro-vision", "gemini-1.5-pro"]
+            },
+            "together": {
+                "name": "Together AI",
+                "description": "Together AI's hosted open-source models",
+                "requires_api_key": True,
+                "cost": "Paid (free tier available)",
+                "speed": "Fast",
+                "accuracy": "Good",
+                "api_key_env": "TOGETHER_API_KEY",
+                "models": [
+                    "meta-llama/Llama-2-70b-chat-hf",
+                    "mistralai/Mixtral-8x7B-Instruct-v0.1",
+                    "togethercomputer/RedPajama-INCITE-Chat-7B"
+                ]
+            },
+            "replicate": {
+                "name": "Replicate",
+                "description": "Replicate's hosted models API",
+                "requires_api_key": True,
+                "cost": "Pay-per-use",
+                "speed": "Variable",
+                "accuracy": "Good",
+                "api_key_env": "REPLICATE_API_KEY",
+                "models": [
+                    "meta/llama-2-70b-chat",
+                    "mistralai/mixtral-8x7b-instruct-v0.1",
+                    "stabilityai/stable-diffusion-xl-base-1.0"
+                ]
             }
         }
     
@@ -62,7 +127,9 @@ class ModelManager:
                 "name": config["name"],
                 "description": config["description"],
                 "requires_api_key": config["requires_api_key"],
-                "cost": config["cost"]
+                "cost": config["cost"],
+                "speed": config.get("speed", "N/A"),
+                "accuracy": config.get("accuracy", "N/A")
             }
             for model_id, config in self.model_configs.items()
         ]
@@ -113,6 +180,14 @@ class ModelManager:
             return self._ollama_analysis(paper_data)
         elif model_id == "huggingface":
             return self._huggingface_analysis(paper_data)
+        elif model_id == "cohere":
+            return self._cohere_analysis(paper_data)
+        elif model_id == "google":
+            return self._google_analysis(paper_data)
+        elif model_id == "together":
+            return self._together_analysis(paper_data)
+        elif model_id == "replicate":
+            return self._replicate_analysis(paper_data)
         else:
             return self._keyword_analysis(paper_data)
     
@@ -284,6 +359,180 @@ class ModelManager:
                 
         except Exception as e:
             print(f"Hugging Face analysis error: {e}")
+            return self._keyword_analysis(paper_data)
+    
+    def _cohere_analysis(self, paper_data: Dict) -> Dict:
+        """Analyze using Cohere Command API"""
+        try:
+            import cohere
+            api_key = os.getenv("COHERE_API_KEY")
+            if not api_key:
+                return self._keyword_analysis(paper_data)
+            
+            client = cohere.Client(api_key)
+            
+            prompt = f"""
+            Analyze this AI paper for AGI (Artificial General Intelligence) and ASI (Artificial Super Intelligence) relevance.
+            
+            Title: {paper_data.get('title', '')}
+            Summary: {paper_data.get('summary', '')}
+            
+            Provide:
+            1. Semantic relevance score (0-100)
+            2. Key concepts related to AGI/ASI
+            3. Brief reasoning
+            
+            Format your response as JSON with keys: semantic_relevance, key_concepts, reasoning
+            """
+            
+            response = client.chat(
+                message=prompt,
+                model="command"
+            )
+            
+            import json
+            result = json.loads(response.text)
+            result["model_used"] = "cohere"
+            return result
+            
+        except Exception as e:
+            print(f"Cohere analysis error: {e}")
+            return self._keyword_analysis(paper_data)
+    
+    def _google_analysis(self, paper_data: Dict) -> Dict:
+        """Analyze using Google Gemini API"""
+        try:
+            import google.generativeai as genai
+            api_key = os.getenv("GOOGLE_API_KEY")
+            if not api_key:
+                return self._keyword_analysis(paper_data)
+            
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-pro')
+            
+            prompt = f"""
+            Analyze this AI paper for AGI (Artificial General Intelligence) and ASI (Artificial Super Intelligence) relevance.
+            
+            Title: {paper_data.get('title', '')}
+            Summary: {paper_data.get('summary', '')}
+            
+            Provide:
+            1. Semantic relevance score (0-100)
+            2. Key concepts related to AGI/ASI
+            3. Brief reasoning
+            
+            Format your response as JSON with keys: semantic_relevance, key_concepts, reasoning
+            """
+            
+            response = model.generate_content(prompt)
+            
+            import json
+            result = json.loads(response.text)
+            result["model_used"] = "google"
+            return result
+            
+        except Exception as e:
+            print(f"Google analysis error: {e}")
+            return self._keyword_analysis(paper_data)
+    
+    def _together_analysis(self, paper_data: Dict) -> Dict:
+        """Analyze using Together AI API"""
+        try:
+            api_key = os.getenv("TOGETHER_API_KEY")
+            if not api_key:
+                return self._keyword_analysis(paper_data)
+            
+            model_id = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+            api_url = "https://api.together.xyz/v1/chat/completions"
+            
+            prompt = f"""
+            Analyze this AI paper for AGI (Artificial General Intelligence) and ASI (Artificial Super Intelligence) relevance.
+            
+            Title: {paper_data.get('title', '')}
+            Summary: {paper_data.get('summary', '')}
+            
+            Provide:
+            1. Semantic relevance score (0-100)
+            2. Key concepts related to AGI/ASI
+            3. Brief reasoning
+            
+            Format as JSON with keys: semantic_relevance, key_concepts, reasoning
+            """
+            
+            response = requests.post(
+                api_url,
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": model_id,
+                    "messages": [{"role": "user", "content": prompt}]
+                },
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                import json
+                result = json.loads(response.json()["choices"][0]["message"]["content"])
+                result["model_used"] = "together"
+                return result
+            else:
+                return self._keyword_analysis(paper_data)
+                
+        except Exception as e:
+            print(f"Together AI analysis error: {e}")
+            return self._keyword_analysis(paper_data)
+    
+    def _replicate_analysis(self, paper_data: Dict) -> Dict:
+        """Analyze using Replicate API"""
+        try:
+            api_key = os.getenv("REPLICATE_API_KEY")
+            if not api_key:
+                return self._keyword_analysis(paper_data)
+            
+            # Using a simple text model for analysis
+            model_id = "meta/llama-2-70b-chat"
+            api_url = f"https://api.replicate.com/v1/models/{model_id}/predictions"
+            
+            prompt = f"""
+            Analyze this AI paper for AGI (Artificial General Intelligence) and ASI (Artificial Super Intelligence) relevance.
+            
+            Title: {paper_data.get('title', '')}
+            Summary: {paper_data.get('summary', '')}
+            
+            Provide:
+            1. Semantic relevance score (0-100)
+            2. Key concepts related to AGI/ASI
+            3. Brief reasoning
+            
+            Format as JSON with keys: semantic_relevance, key_concepts, reasoning
+            """
+            
+            response = requests.post(
+                api_url,
+                headers={
+                    "Authorization": f"Token {api_key}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "input": {
+                        "prompt": prompt
+                    }
+                },
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                import json
+                result = json.loads(response.json()["output"])
+                result["model_used"] = "replicate"
+                return result
+            else:
+                return self._keyword_analysis(paper_data)
+                
+        except Exception as e:
+            print(f"Replicate analysis error: {e}")
             return self._keyword_analysis(paper_data)
     
     def batch_analyze(self, papers: List[Dict], model_id: Optional[str] = None) -> List[Dict]:
