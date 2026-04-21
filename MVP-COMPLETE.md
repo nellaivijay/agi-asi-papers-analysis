@@ -6,7 +6,7 @@ I have built a complete, working MVP for the AI Papers Intelligence Classifier t
 
 ## 📁 **Project Structure**
 
-The complete MVP is located in: `/home/ramdov/projects/agi-asi-papers-analysis/`
+The complete MVP is located in: `/home/ramdov/projects/ai-papers-intelligence-classifier/`
 
 ### **Core Components**
 
@@ -84,7 +84,7 @@ The complete MVP is located in: `/home/ramdov/projects/agi-asi-papers-analysis/`
 
 1. **Create Hugging Face Space:**
    - Go to https://huggingface.co/new-space
-   - Name: `agi-asi-papers-analysis`
+   - Name: `ai-papers-intelligence-classifier`
    - SDK: Gradio
    - Python: 3.10
    - License: MIT
@@ -92,25 +92,25 @@ The complete MVP is located in: `/home/ramdov/projects/agi-asi-papers-analysis/`
 
 2. **Upload Files:**
    ```bash
-   cd /home/ramdov/projects/agi-asi-papers-analysis
-   git remote add origin https://huggingface.co/spaces/YOUR_USERNAME/agi-asi-papers-analysis
+   cd /home/ramdov/projects/ai-papers-intelligence-classifier
+   git remote add origin https://huggingface.co/spaces/YOUR_USERNAME/ai-papers-intelligence-classifier
    git branch -M main
    git push -u origin main
    ```
 
-3. **Access:** https://huggingface.co/spaces/YOUR_USERNAME/agi-asi-papers-analysis
+3. **Access:** https://huggingface.co/spaces/YOUR_USERNAME/ai-papers-intelligence-classifier
 
 ### **Option 2: GitHub First**
 
 1. **Create GitHub Repository:**
    - Go to https://github.com/new
-   - Name: `agi-asi-papers-analysis`
+   - Name: `ai-papers-intelligence-classifier`
    - Click "Create repository"
 
 2. **Push to GitHub:**
    ```bash
-   cd /home/ramdov/projects/agi-asi-papers-analysis
-   git remote add origin https://github.com/YOUR_USERNAME/agi-asi-papers-analysis.git
+   cd /home/ramdov/projects/ai-papers-intelligence-classifier
+   git remote add origin https://github.com/YOUR_USERNAME/ai-papers-intelligence-classifier.git
    git branch -M main
    git push -u origin main
    ```
@@ -144,7 +144,7 @@ The complete MVP is located in: `/home/ramdov/projects/agi-asi-papers-analysis/`
 
 ### **Local Testing:**
 ```bash
-cd /home/ramdov/projects/agi-asi-papers-analysis
+cd /home/ramdov/projects/ai-papers-intelligence-classifier
 pip install -r requirements.txt
 python app.py
 ```
@@ -299,7 +299,7 @@ The AGI/ASI Papers Analysis MVP is fully functional and ready to deploy. It incl
 
 **To deploy, simply:**
 1. Create a Hugging Face Space or GitHub repository
-2. Upload the files from `/home/ramdov/projects/agi-asi-papers-analysis/`
+2. Upload the files from `/home/ramdov/projects/ai-papers-intelligence-classifier/`
 3. The application will work immediately
 
 The MVP is production-ready and provides significant value for tracking AGI/ASI research developments!

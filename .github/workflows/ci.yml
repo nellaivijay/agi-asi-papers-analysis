@@ -101,5 +101,5 @@ jobs:
       run: |
         git config --global user.email "github-actions@github.com"
         git config --global user.name "github-actions"
-        git remote add hf https://huggingface.co/spaces/nellaivijay/agi-asi-papers-analysis
+        git remote add hf https://huggingface.co/spaces/nellaivijay/ai-papers-intelligence-classifier
         git push hf main --force

@@ -132,8 +132,8 @@ Papers are ranked using a composite score:
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/agi-asi-papers-analysis.git
-cd agi-asi-papers-analysis
+git clone https://github.com/nellaivijay/ai-papers-intelligence-classifier.git
+cd ai-papers-intelligence-classifier
 
 # Create virtual environment
 python -m venv venv

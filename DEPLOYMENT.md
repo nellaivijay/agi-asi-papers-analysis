@@ -60,7 +60,7 @@ python app.py --server_name 0.0.0.0 --server_port 7860
    - Click "Create new Space"
    - Choose:
      - **Owner**: Your username
-     - **Space name**: `agi-asi-papers-analysis`
+     - **Space name**: `ai-papers-intelligence-classifier`
      - **License**: MIT
      - **SDK**: Gradio
      - **Hardware**: CPU Basic (free) or upgrade if needed
@@ -113,7 +113,7 @@ python app.py --server_name 0.0.0.0 --server_port 7860
    - Monitor the build logs in the Space
 
 8. **Access Your Space**
-   - URL will be: `https://huggingface.co/spaces/YOUR_USERNAME/agi-asi-papers-analysis`
+   - URL will be: `https://huggingface.co/spaces/nellaivijay/ai-papers-intelligence-classifier`
 
 #### Hugging Face Space Configuration
 
