@@ -1,6 +1,6 @@
 """
-AGI/ASI Papers Analysis - Main Gradio Application
-Analyzes AI papers from AI-Papers-of-the-Week for AGI/ASI relevance
+AI Papers Intelligence Classifier - Main Gradio Application
+Analyzes AI papers from AI-Papers-of-the-Week across the intelligence spectrum
 """
 
 import gradio as gr
@@ -10,7 +10,7 @@ import plotly.express as px
 from datetime import datetime
 
 from data_fetcher import AIPapersFetcher
-from classifier import AGIASIClassifier
+from classifier import AIPapersIntelligenceClassifier
 from ranker import PaperRanker
 from model_manager import ModelManager
 from advanced_analyzer import AdvancedAnalyzer
@@ -20,7 +20,7 @@ from reasoning_classifier import ReasoningClassifier
 # Initialize components
 fetcher = AIPapersFetcher()
 model_manager = ModelManager()
-classifier = AGIASIClassifier()
+classifier = AIPapersIntelligenceClassifier()
 reasoning_classifier = ReasoningClassifier()
 ranker = PaperRanker()
 advanced_analyzer = AdvancedAnalyzer()
@@ -29,7 +29,7 @@ advanced_analyzer = AdvancedAnalyzer()
 def analyze_week(year: str, week: str, model_id: str = "keyword", 
                 classification_mode: str = "keyword", use_semantic: bool = False) -> tuple:
     """
-    Analyze papers from a specific week for AGI/ASI relevance
+    Analyze papers from a specific week across the intelligence spectrum
     
     Args:
         year: Year to analyze
@@ -147,10 +147,13 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
             # Add color-coded classification badge
             classification = paper['classification_result']['classification']
             classification_colors = {
-                'AGI': '#00D4AA',
                 'ASI': '#7C3AED',
+                'AGI': '#00D4AA',
                 'ACI': '#F59E0B',
-                'Narrow AI': '#64748B',
+                'ANI': '#64748B',
+                'Other AI': '#3B82F6',
+                'ML': '#10B981',
+                'DS': '#F97316',
                 'Not Related': '#EF4444'
             }
             color = classification_colors.get(classification, '#64748B')
@@ -160,9 +163,13 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
                 'Rank': paper.get('rank_position', 0),
                 'Title': paper.get('title', 'Unknown'),  # Full title
                 'Classification': classification_html,
-                'AGI Score': paper['classification_result']['agi_score'],
                 'ASI Score': paper['classification_result']['asi_score'],
+                'AGI Score': paper['classification_result']['agi_score'],
                 'ACI Score': paper['classification_result']['aci_score'],
+                'ANI Score': paper['classification_result']['ani_score'],
+                'Other AI Score': paper['classification_result']['other_ai_score'],
+                'ML Score': paper['classification_result']['ml_score'],
+                'DS Score': paper['classification_result']['ds_score'],
                 'Combined Score': paper['classification_result']['combined_score'],
                 'Final Rank': paper.get('final_rank', 0),
                 'Model': semantic_info,
@@ -190,7 +197,7 @@ def generate_weekly_summary(year: str, week: str, total_papers: int,
                            stats: dict, relevant_papers: list, model_id: str, 
                            use_semantic: bool) -> str:
     """Generate summary text for weekly analysis"""
-    summary = f"# 🧠 AGI/ASI Papers Analysis: {week}, {year}\n\n"
+    summary = f"# 🧠 AI Papers Intelligence Classifier: {week}, {year}\n\n"
     summary += f"## 📊 Overview\n\n"
     summary += f"- **Analysis Method**: {'Semantic AI (' + model_id + ')' if use_semantic else 'Keyword-Based'}\n"
     summary += f"- **Total Papers Analyzed**: {total_papers}\n"
@@ -198,12 +205,15 @@ def generate_weekly_summary(year: str, week: str, total_papers: int,
     summary += f"- **AGI Papers**: {stats['agi']}\n"
     summary += f"- **ASI Papers**: {stats['asi']}\n"
     summary += f"- **ACI Papers**: {stats['aci']}\n"
-    summary += f"- **Narrow AI Papers**: {stats['narrow_ai']}\n"
+    summary += f"- **ANI Papers**: {stats['ani']}\n"
+    summary += f"- **Other AI Papers**: {stats['other_ai']}\n"
+    summary += f"- **ML Papers**: {stats['ml']}\n"
+    summary += f"- **DS Papers**: {stats['ds']}\n"
     summary += f"- **Not Related**: {stats['not_related']}\n"
     summary += f"- **Relevance Rate**: {stats['relevance_rate']}%\n\n"
     
     if relevant_papers:
-        summary += f"## 🎯 Top AGI/ASI Papers\n\n"
+        summary += f"## 🎯 Top Intelligence Papers\n\n"
         for i, paper in enumerate(relevant_papers[:5], 1):
             title = paper.get('title', 'Unknown')
             classification = paper['classification_result']['classification']
@@ -222,10 +232,13 @@ def generate_statistics_text(stats: dict) -> str:
     """Generate statistics text"""
     text = "## 📈 Classification Statistics\n\n"
     text += f"- **Total Papers**: {stats['total']}\n"
-    text += f"- **AGI**: {stats['agi']} ({stats['agi']/stats['total']*100:.1f}%)\n"
     text += f"- **ASI**: {stats['asi']} ({stats['asi']/stats['total']*100:.1f}%)\n"
+    text += f"- **AGI**: {stats['agi']} ({stats['agi']/stats['total']*100:.1f}%)\n"
     text += f"- **ACI**: {stats['aci']} ({stats['aci']/stats['total']*100:.1f}%)\n"
-    text += f"- **Narrow AI**: {stats['narrow_ai']} ({stats['narrow_ai']/stats['total']*100:.1f}%)\n"
+    text += f"- **ANI**: {stats['ani']} ({stats['ani']/stats['total']*100:.1f}%)\n"
+    text += f"- **Other AI**: {stats['other_ai']} ({stats['other_ai']/stats['total']*100:.1f}%)\n"
+    text += f"- **ML**: {stats['ml']} ({stats['ml']/stats['total']*100:.1f}%)\n"
+    text += f"- **DS**: {stats['ds']} ({stats['ds']/stats['total']*100:.1f}%)\n"
     text += f"- **Not Related**: {stats['not_related']} ({stats['not_related']/stats['total']*100:.1f}%)\n"
     text += f"- **Overall Relevance Rate**: {stats['relevance_rate']}%\n\n"
     
@@ -267,12 +280,13 @@ def generate_top_papers_text(papers: list) -> str:
 
 def create_classification_chart(stats: dict) -> go.Figure:
     """Create a pie chart showing classification distribution"""
-    labels = ['AGI', 'ASI', 'ACI', 'Narrow AI', 'Not Related']
-    values = [stats['agi'], stats['asi'], stats['aci'], 
-              stats['narrow_ai'], stats['not_related']]
+    labels = ['ASI', 'AGI', 'ACI', 'ANI', 'Other AI', 'ML', 'DS', 'Not Related']
+    values = [stats['asi'], stats['agi'], stats['aci'], 
+              stats['ani'], stats['other_ai'], stats['ml'], stats['ds'],
+              stats['not_related']]
     
     # Modern color palette
-    colors = ['#00D4AA', '#7C3AED', '#F59E0B', '#64748B', '#EF4444']
+    colors = ['#7C3AED', '#00D4AA', '#F59E0B', '#64748B', '#3B82F6', '#10B981', '#F97316', '#EF4444']
     
     fig = go.Figure(data=[go.Pie(
         labels=labels,
@@ -401,10 +415,13 @@ def create_scatter_chart(ranked_papers: list) -> go.Figure:
     
     # Modern color palette for classifications
     color_map = {
-        'AGI': '#00D4AA',
         'ASI': '#7C3AED',
+        'AGI': '#00D4AA',
         'ACI': '#F59E0B',
-        'Narrow AI': '#64748B',
+        'ANI': '#64748B',
+        'Other AI': '#3B82F6',
+        'ML': '#10B981',
+        'DS': '#F97316',
         'Not Related': '#EF4444'
     }
     colors = [color_map.get(c, '#64748B') for c in classifications]
@@ -513,10 +530,13 @@ def analyze_trends(year: str) -> tuple:
                 weekly_stats.append({
                     'week': week,
                     'total': stats['total'],
-                    'agi': stats['agi'],
                     'asi': stats['asi'],
+                    'agi': stats['agi'],
                     'aci': stats['aci'],
-                    'narrow_ai': stats['narrow_ai'],
+                    'ani': stats['ani'],
+                    'other_ai': stats['other_ai'],
+                    'ml': stats['ml'],
+                    'ds': stats['ds'],
                     'relevance_rate': stats['relevance_rate']
                 })
         
@@ -534,7 +554,7 @@ def analyze_trends(year: str) -> tuple:
 
 def generate_trend_summary(year: str, weekly_stats: list) -> str:
     """Generate trend analysis summary"""
-    summary = f"# 📈 AGI/ASI Research Trends - {year}\n\n"
+    summary = f"# 📈 AI Research Trends - {year}\n\n"
     
     if not weekly_stats:
         summary += "No weekly data available for trend analysis.\n"
@@ -543,23 +563,23 @@ def generate_trend_summary(year: str, weekly_stats: list) -> str:
     # Calculate overall statistics
     total_weeks = len(weekly_stats)
     total_papers = sum(w['total'] for w in weekly_stats)
-    total_agi_asi = sum(w['agi'] + w['asi'] + w['aci'] for w in weekly_stats)
+    total_intelligence = sum(w['asi'] + w['agi'] + w['aci'] + w['ani'] + w['other_ai'] + w['ml'] + w['ds'] for w in weekly_stats)
     avg_relevance_rate = sum(w['relevance_rate'] for w in weekly_stats) / total_weeks
     
     summary += f"## 📊 Overall Statistics\n\n"
     summary += f"- **Total Weeks Analyzed**: {total_weeks}\n"
     summary += f"- **Total Papers**: {total_papers}\n"
-    summary += f"- **Total AGI/ASI Papers**: {total_agi_asi}\n"
+    summary += f"- **Total Intelligence Papers**: {total_intelligence}\n"
     summary += f"- **Average Relevance Rate**: {avg_relevance_rate:.1f}%\n\n"
     
-    # Find weeks with highest AGI/ASI activity
-    top_weeks = sorted(weekly_stats, key=lambda x: x['agi'] + x['asi'] + x['aci'], reverse=True)[:3]
+    # Find weeks with highest intelligence activity
+    top_weeks = sorted(weekly_stats, key=lambda x: x['asi'] + x['agi'] + x['aci'], reverse=True)[:3]
     
-    summary += f"## 🏆 Top Weeks for AGI/ASI Research\n\n"
+    summary += f"## 🏆 Top Weeks for High-Level Intelligence Research\n\n"
     for i, week_stat in enumerate(top_weeks, 1):
         week_name = week_stat['week'].split(' - ')[0]
-        agi_asi_count = week_stat['agi'] + week_stat['asi'] + week_stat['aci']
-        summary += f"{i}. **{week_name}**: {agi_asi_count} AGI/ASI papers ({week_stat['relevance_rate']}% relevance)\n"
+        high_level_count = week_stat['asi'] + week_stat['agi'] + week_stat['aci']
+        summary += f"{i}. **{week_name}**: {high_level_count} high-level intelligence papers ({week_stat['relevance_rate']}% relevance)\n"
     
     summary += "\n"
     
@@ -570,7 +590,7 @@ def create_trend_chart(week_names: list, weekly_stats: list) -> go.Figure:
     """Create trend visualization chart"""
     # Prepare data
     relevance_rates = [w['relevance_rate'] for w in weekly_stats]
-    agi_asi_counts = [w['agi'] + w['asi'] + w['aci'] for w in weekly_stats]
+    intelligence_counts = [w['asi'] + w['agi'] + w['aci'] + w['ani'] + w['other_ai'] + w['ml'] + w['ds'] for w in weekly_stats]
     
     # Create figure with secondary y-axis
     fig = go.Figure()
@@ -588,16 +608,16 @@ def create_trend_chart(week_names: list, weekly_stats: list) -> go.Figure:
         hovertemplate='<b>%{x}</b><br>Relevance Rate: %{y:.1f}%<extra></extra>'
     ))
     
-    # Add AGI/ASI paper count bars
+    # Add intelligence paper count bars
     fig.add_trace(go.Bar(
         x=week_names,
-        y=agi_asi_counts,
-        name='AGI/ASI Papers',
+        y=intelligence_counts,
+        name='Intelligence Papers',
         marker=dict(
             color='#EC4899',
             line=dict(color='#DB2777', width=1)
         ),
-        hovertemplate='<b>%{x}</b><br>AGI/ASI Papers: %{y}<extra></extra>',
+        hovertemplate='<b>%{x}</b><br>Intelligence Papers: %{y}<extra></extra>',
         yaxis='y2'
     ))
     
@@ -673,7 +693,7 @@ def create_interface():
         secondary_hue="pink",
     )
     
-    with gr.Blocks(title="AGI/ASI Papers Analysis", theme=custom_theme, css="""
+    with gr.Blocks(title="AI Papers Intelligence Classifier", theme=custom_theme, css="""
         .gradio-container {
             max-width: 1400px !important;
         }
@@ -711,15 +731,15 @@ def create_interface():
         gr.Markdown("""
         <div style="text-align: center; padding: 2rem 0;">
             <h1 style="font-size: 3rem; font-weight: 700; color: #1E293B; margin-bottom: 0.5rem;">
-                🧠 AGI/ASI Papers Analysis
+                🧠 AI Papers Intelligence Classifier
             </h1>
             <p style="font-size: 1.2rem; color: #64748B; margin-bottom: 1.5rem;">
                 Analyze AI papers from <a href="https://github.com/dair-ai/AI-Papers-of-the-Week" target="_blank" style="color: #6366F1; text-decoration: none; font-weight: 500;">AI-Papers-of-the-Week</a> 
-                for AGI (Artificial General Intelligence) and ASI (Artificial Super Intelligence) relevance.
+                across the intelligence spectrum: ANI, AGI, ASI, ACI, ML, and DS.
             </p>
             <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1)); 
                         padding: 1rem; border-radius: 12px; border-left: 4px solid #6366F1;">
-                <strong style="color: #6366F1;">🎓 Educational Purpose:</strong> This tool is created for educational purposes to demonstrate AGI/ASI research tracking and analysis.
+                <strong style="color: #6366F1;">🎓 Educational Purpose:</strong> This tool is created for educational purposes to demonstrate AI research tracking and analysis across the intelligence spectrum.
             </div>
         </div>
         """)
@@ -776,10 +796,10 @@ def create_interface():
                 
                 papers_df = gr.Dataframe(
             label="All Papers Ranking",
-            datatype=["number", "str", "markdown", "number", "number", "number", "number", "number", "str", "markdown"],
+            datatype=["number", "str", "markdown", "number", "number", "number", "number", "number", "number", "number", "number", "number", "str", "markdown"],
             wrap=True,
-            column_widths=["80px", "400px", "150px", "80px", "80px", "80px", "80px", "80px", "100px", "120px"],
-            headers=["Rank", "Title", "Classification", "AGI Score", "ASI Score", "ACI Score", "Combined Score", "Final Rank", "Model", "Links"],
+            column_widths=["80px", "400px", "150px", "80px", "80px", "80px", "80px", "80px", "80px", "80px", "80px", "80px", "100px", "120px"],
+            headers=["Rank", "Title", "Classification", "ASI Score", "AGI Score", "ACI Score", "ANI Score", "Other AI Score", "ML Score", "DS Score", "Combined Score", "Final Rank", "Model", "Links"],
             interactive=False
         )
                 
@@ -1023,7 +1043,7 @@ if __name__ == "__main__":
     import sys
     
     print("=" * 60)
-    print("🧠 AGI/ASI Papers Analysis - Application Startup")
+    print("🧠 AI Papers Intelligence Classifier - Application Startup")
     print("=" * 60)
     print(f"📅 Starting at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"🐍 Python Version: {sys.version.split()[0]}")

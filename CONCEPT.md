@@ -1,29 +1,49 @@
-# AGI/ASI Papers Analysis - Concept Guide
+# AI Papers Intelligence Classifier - Concept Guide
 
-This guide explains the concepts, methodology, and technical architecture behind the AGI/ASI Papers Analysis tool.
+This guide explains the concepts, methodology, and technical architecture behind the AI Papers Intelligence Classifier tool.
 
 ## 🎓 Educational Purpose
 
-This tool demonstrates how to build an AI-powered research analysis system for tracking AGI (Artificial General Intelligence), ASI (Artificial Super Intelligence), and ACI (Artificial Collective Intelligence) research trends.
+This tool demonstrates how to build an AI-powered research analysis system for tracking AI research across the entire intelligence spectrum: ANI (Artificial Narrow Intelligence), AGI (Artificial General Intelligence), ASI (Artificial Super Intelligence), ACI (Artificial Collective Intelligence), ML (Machine Learning), and DS (Data Science).
 
 ## Core Concepts
 
-### 1. AGI vs ASI vs ACI
+### 1. Intelligence Spectrum
 
-**AGI (Artificial General Intelligence)**
-- AI systems with human-level cognitive abilities across diverse domains
-- Capable of learning, reasoning, and adapting to new situations
-- Key characteristics: transfer learning, few-shot learning, reasoning systems
+The tool classifies AI research across a comprehensive intelligence spectrum:
 
 **ASI (Artificial Super Intelligence)**
 - AI systems surpassing human intelligence in all domains
 - Associated with existential risk, alignment problems, and safety concerns
 - Key topics: AI safety, alignment, superintelligence, singularity
 
+**AGI (Artificial General Intelligence)**
+- AI systems with human-level cognitive abilities across diverse domains
+- Capable of learning, reasoning, and adapting to new situations
+- Key characteristics: transfer learning, few-shot learning, reasoning systems
+
 **ACI (Artificial Collective Intelligence)**
 - AI systems that demonstrate emergent intelligence through multi-agent collaboration
 - Focus on swarm intelligence, human-AI collaboration, and distributed cognition
 - Key topics: multi-agent systems, swarm intelligence, collaborative AI
+
+**ANI (Artificial Narrow Intelligence)**
+- Specialized AI systems designed for specific tasks or domains
+- Focus on task-specific optimization and domain expertise
+- Key topics: expert systems, specialized neural networks, vertical AI
+
+**Other AI**
+- General AI topics that don't fit specific intelligence categories
+- Broad AI research, applications, and systems
+- Key topics: computer vision, NLP, robotics, intelligent systems
+
+**ML (Machine Learning)**
+- Focus on learning algorithms and statistical methods
+- Key topics: neural networks, deep learning, supervised/unsupervised learning
+
+**DS (Data Science)**
+- Focus on data analysis, visualization, and methodologies
+- Key topics: data mining, statistical analysis, data engineering
 
 ### 2. Research Analysis Methodology
 
@@ -31,7 +51,7 @@ The tool uses a hybrid approach combining:
 
 **Keyword-Based Analysis**
 - Fast pattern matching against curated keyword lists
-- Identifies papers mentioning AGI/ASI/ACI concepts
+- Identifies papers mentioning AI/ML/DS concepts
 - Provides baseline classification
 
 **Semantic Analysis (Optional)**
@@ -39,7 +59,7 @@ The tool uses a hybrid approach combining:
 - Captures nuance and context beyond keywords
 - Enhances classification accuracy
 
-**Reasoning-Based Classification (New)**
+**Reasoning-Based Classification**
 - Uses DeepSeek-R1 with Chain of Thought reasoning
 - Provides detailed analysis and confidence scores
 - More accurate classification of complex papers
@@ -51,15 +71,18 @@ The tool uses a hybrid approach combining:
 
 ### 3. Classification System
 
-Papers are classified into five levels:
+Papers are classified into eight levels across the intelligence spectrum:
 
-|| Level | Criteria | Description |
-||-------|----------|-------------|
-|| ASI | 3+ ASI keywords or highest-level reasoning | Direct focus on superintelligence and existential risk |
-|| AGI | 3+ AGI keywords or high-level reasoning | Direct focus on general intelligence capabilities |
-|| ACI | 3+ ACI keywords or collective intelligence focus | Multi-agent systems and swarm intelligence |
-|| Narrow AI | 1-2 core keywords or 4+ related keywords | Specific domain AI without general intelligence |
-|| Not Related | No significant matches | No clear AGI/ASI/ACI connection |
+| Level | Criteria | Description |
+|-------|----------|-------------|
+| ASI | 3+ ASI keywords or highest-level reasoning | Direct focus on superintelligence and existential risk |
+| AGI | 3+ AGI keywords or high-level reasoning | Direct focus on general intelligence capabilities |
+| ACI | 3+ ACI keywords or collective intelligence focus | Multi-agent systems and swarm intelligence |
+| ANI | 3+ ANI keywords or specialized AI focus | Task-specific AI and domain expertise |
+| Other AI | 3+ Other AI keywords or general AI focus | Broad AI topics and applications |
+| ML | 3+ ML keywords or machine learning focus | Learning algorithms and statistical methods |
+| DS | 3+ DS keywords or data science focus | Data analysis and methodologies |
+| Not Related | No significant matches | No clear AI/ML/DS connection |
 
 ### 4. Ranking Algorithm
 
@@ -67,18 +90,20 @@ The ranking system uses weighted scoring:
 
 **Relevance Score (50%)**
 - Based on keyword matches and semantic analysis
-- AGI and ASI keywords weighted higher (3.0x)
-- Related keywords weighted lower (1.0x)
+- ASI and AGI keywords weighted higher (3.0x)
+- ACI and ANI keywords weighted medium (2.0-2.5x)
+- Other AI and ML keywords weighted lower (1.5x)
+- DS and related keywords weighted lowest (1.0x)
 - Semantic analysis adds up to 20 points
 
 **Novelty Score (30%)**
 - Measures keyword diversity and uniqueness
-- Bonus for papers with both AGI and ASI keywords
+- Bonus for papers with multiple intelligence level keywords
 - Encourages innovative research
 
 **Impact Score (20%)**
 - Based on classification level
-- Bonus for ASI-related keywords (higher potential impact)
+- Higher levels (ASI, AGI) have higher base impact
 - Reflects potential significance
 
 **Composite Score**
@@ -105,7 +130,7 @@ Composite = (Relevance × 0.5) + (Novelty × 0.3) + (Impact × 0.2)
                          │
                          ▼
 ┌─────────────────────────────────────────────────────────┐
-│                   AGI/ASI Classifier                      │
+│           AI Papers Intelligence Classifier              │
 │  (Keyword Analysis + Semantic Analysis + Reasoning)      │
 └────────────────────────┬────────────────────────────────┘
                          │
@@ -134,14 +159,14 @@ Composite = (Relevance × 0.5) + (Novelty × 0.3) + (Impact × 0.2)
 
 The tool supports multiple analysis models:
 
-|| Model | Use Case | Pros | Cons |
-||-------|----------|------|------|
-|| Keyword | Quick screening | Fast, free, no setup | Limited understanding |
-|| OpenAI GPT | Deep analysis | Best semantic understanding | Paid, requires API key |
-|| Anthropic Claude | Complex papers | Excellent reasoning | Paid, requires API key |
-|| Ollama | Privacy-focused | Free, local, private | Slower, requires setup |
-|| Hugging Face | Budget-friendly | Free tier, good quality | Rate limits, API key |
-|| DeepSeek-R1 | Reasoning classification | Chain of thought, accurate | Medium speed, requires HF |
+| Model | Use Case | Pros | Cons |
+|-------|----------|------|------|
+| Keyword | Quick screening | Fast, free, no setup | Limited understanding |
+| OpenAI GPT | Deep analysis | Best semantic understanding | Paid, requires API key |
+| Anthropic Claude | Complex papers | Excellent reasoning | Paid, requires API key |
+| Ollama | Privacy-focused | Free, local, private | Slower, requires setup |
+| Hugging Face | Budget-friendly | Free tier, good quality | Rate limits, API key |
+| DeepSeek-R1 | Reasoning classification | Chain of thought, accurate | Medium speed, requires HF |
 
 ### Classification Modes
 
@@ -164,13 +189,6 @@ The tool supports three classification modes:
 
 ## Keyword Strategy
 
-### AGI Keywords
-Focus on general intelligence capabilities:
-- "general intelligence", "AGI", "human-level AI"
-- "transfer learning", "few-shot learning", "meta-learning"
-- "reasoning systems", "neuro-symbolic integration"
-- "autonomous agents", "self-improving AI"
-
 ### ASI Keywords
 Focus on superintelligence and safety:
 - "superintelligence", "ASI", "existential risk"
@@ -178,12 +196,47 @@ Focus on superintelligence and safety:
 - "recursive self-improvement", "singularity"
 - "AI control problem", "beneficial AI"
 
+### AGI Keywords
+Focus on general intelligence capabilities:
+- "general intelligence", "AGI", "human-level AI"
+- "transfer learning", "few-shot learning", "meta-learning"
+- "reasoning systems", "neuro-symbolic integration"
+- "autonomous agents", "self-improving AI"
+
 ### ACI Keywords
 Focus on collective intelligence:
 - "multi-agent systems", "swarm intelligence"
 - "collective intelligence", "collaborative AI"
 - "distributed cognition", "emergent behavior"
 - "human-AI collaboration", "agent coordination"
+
+### ANI Keywords
+Focus on narrow/specialized AI:
+- "narrow AI", "specialized AI", "task-specific AI"
+- "domain-specific systems", "expert systems"
+- "single-purpose AI", "focused AI applications"
+- "specialized neural networks", "task optimization"
+
+### Other AI Keywords
+Focus on general AI topics:
+- "artificial intelligence", "AI research"
+- "AI applications", "AI systems"
+- "computer vision", "NLP", "speech recognition"
+- "robotics", "autonomous systems"
+
+### ML Keywords
+Focus on machine learning:
+- "machine learning", "deep learning"
+- "neural networks", "CNN", "RNN", "Transformer"
+- "supervised learning", "unsupervised learning"
+- "reinforcement learning", "feature engineering"
+
+### DS Keywords
+Focus on data science:
+- "data science", "data analysis"
+- "data mining", "big data"
+- "statistical analysis", "data visualization"
+- "data engineering", "data pipelines"
 
 ### Related Keywords
 Contextual AI research terms:
@@ -195,7 +248,7 @@ Contextual AI research terms:
 
 ### Classification Distribution (Pie Chart)
 - Shows proportion of papers in each classification level
-- Helps understand overall AGI/ASI/ACI relevance
+- Helps understand overall AI/ML/DS relevance
 
 ### Ranking Scores (Bar Chart)
 - Compares final rank vs combined relevance scores
@@ -207,19 +260,19 @@ Contextual AI research terms:
 - Helps identify novel, high-relevance research
 
 ### Trend Analysis (Line Chart)
-- Tracks AGI/ASI/ACI research patterns over time
+- Tracks AI research patterns over time
 - Shows relevance rate changes across weeks
-- Identifies periods of high AGI/ASI/ACI activity
+- Identifies periods of high AI activity
 
 ## Performance Considerations
 
 ### Speed vs Accuracy Trade-off
 
-|| Mode | Speed | Accuracy | Best For |
-||------|-------|----------|----------|
-|| Keyword Only | ⚡⚡⚡ | ⭐⭐ | High-volume screening |
-|| Reasoning Only | ⚡ | ⭐⭐⭐⭐⭐ | Deep analysis |
-|| Hybrid | ⚡⚡ | ⭐⭐⭐⭐ | Balanced approach |
+| Mode | Speed | Accuracy | Best For |
+|------|-------|----------|----------|
+| Keyword Only | ⚡⚡⚡ | ⭐⭐ | High-volume screening |
+| Reasoning Only | ⚡ | ⭐⭐⭐⭐⭐ | Deep analysis |
+| Hybrid | ⚡⚡ | ⭐⭐⭐⭐ | Balanced approach |
 
 ### Caching Strategy
 - Year-level data cached for 1 hour
@@ -257,7 +310,7 @@ Potential improvements to consider:
 1. **Expanded Data Sources**: Include arXiv, conference proceedings
 2. **Custom Keyword Lists**: Allow users to define custom keywords
 3. **Citation Analysis**: Incorporate citation counts and impact metrics
-4. **Author Tracking**: Track researchers working on AGI/ASI/ACI topics
+4. **Author Tracking**: Track researchers working on AI topics
 5. **Topic Modeling**: Use LDA or similar for topic discovery
 6. **Cross-Reference**: Link related papers across weeks
 7. **Alert System**: Notify users of high-relevance papers
@@ -274,6 +327,7 @@ This project demonstrates:
 5. **Gradio Interfaces**: Building web-based ML tools
 6. **Research Analysis**: Techniques for academic paper analysis
 7. **Reasoning Systems**: Chain of thought classification
+8. **Intelligence Spectrum**: Understanding AI classification across levels
 
 ## References
 

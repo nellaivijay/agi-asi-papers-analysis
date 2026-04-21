@@ -137,16 +137,25 @@ def test_filter_by_classification():
     
     papers = [
         {
-            'classification_result': {'classification': 'AGI'}
+            'classification_result': {'classification': 'ASI'}
         },
         {
-            'classification_result': {'classification': 'ASI'}
+            'classification_result': {'classification': 'AGI'}
         },
         {
             'classification_result': {'classification': 'ACI'}
         },
         {
-            'classification_result': {'classification': 'Narrow AI'}
+            'classification_result': {'classification': 'ANI'}
+        },
+        {
+            'classification_result': {'classification': 'Other AI'}
+        },
+        {
+            'classification_result': {'classification': 'ML'}
+        },
+        {
+            'classification_result': {'classification': 'DS'}
         },
         {
             'classification_result': {'classification': 'Not Related'}

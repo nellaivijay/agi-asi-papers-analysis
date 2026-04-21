@@ -140,28 +140,35 @@ class PaperRanker:
         
         # Base score from classification level
         level_scores = {
-            'AGI': 90.0,
-            'ASI': 95.0,  # Highest impact
-            'ACI': 85.0,  # Emerging field, high potential
-            'Narrow AI': 40.0,
+            'ASI': 95.0,      # Highest impact - superintelligence
+            'AGI': 90.0,      # Very high impact - general intelligence
+            'ACI': 85.0,      # High impact - collective intelligence
+            'ANI': 70.0,      # Medium-high impact - narrow intelligence
+            'Other AI': 60.0,  # Medium impact - general AI
+            'ML': 50.0,       # Medium impact - machine learning
+            'DS': 40.0,       # Lower impact - data science
             'Not Related': 10.0
         }
         
         base_score = level_scores.get(level, 10.0)
         
-        # Bonus for ASI keywords (higher potential impact)
+        # Bonus for ASI keywords (highest potential impact)
         asi_matches = len(classification.get('matched_asi_keywords', []))
         asi_bonus = min(asi_matches * 5.0, 10.0)
+        
+        # Bonus for AGI keywords (high potential impact)
+        agi_matches = len(classification.get('matched_agi_keywords', []))
+        agi_bonus = min(agi_matches * 5.0, 10.0)
         
         # Bonus for ACI keywords (emerging field potential)
         aci_matches = len(classification.get('matched_aci_keywords', []))
         aci_bonus = min(aci_matches * 5.0, 10.0)
         
-        # Bonus for AGI keywords
-        agi_matches = len(classification.get('matched_agi_keywords', []))
-        agi_bonus = min(agi_matches * 5.0, 10.0)
+        # Bonus for ANI keywords (specialized AI impact)
+        ani_matches = len(classification.get('matched_ani_keywords', []))
+        ani_bonus = min(ani_matches * 3.0, 5.0)
         
-        impact_score = min(base_score + asi_bonus + aci_bonus + agi_bonus, 100.0)
+        impact_score = min(base_score + asi_bonus + agi_bonus + aci_bonus + ani_bonus, 100.0)
         
         return round(impact_score, 2)
     
@@ -182,7 +189,7 @@ class PaperRanker:
         return ranked[:top_n]
     
     def filter_by_classification(self, papers: List[Dict], 
-                                  min_level: str = 'Narrow AI') -> List[Dict]:
+                                  min_level: str = 'Other AI') -> List[Dict]:
         """
         Filter papers by minimum classification level
         
@@ -195,10 +202,13 @@ class PaperRanker:
         """
         level_hierarchy = {
             'Not Related': 0,
-            'Narrow AI': 1,
-            'ACI': 2,
-            'AGI': 3,
-            'ASI': 4  # Highest level
+            'DS': 1,           # Data Science
+            'ML': 2,           # Machine Learning
+            'Other AI': 3,     # General AI topics
+            'ANI': 4,          # Artificial Narrow Intelligence
+            'ACI': 5,          # Artificial Collective Intelligence
+            'AGI': 6,          # Artificial General Intelligence
+            'ASI': 7           # Artificial Super Intelligence (Highest)
         }
         
         min_level_value = level_hierarchy.get(min_level, 0)

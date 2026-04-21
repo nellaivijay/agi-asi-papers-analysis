@@ -1,5 +1,5 @@
 ---
-title: AGI/ASI Papers Analysis
+title: AI Papers Intelligence Classifier
 emoji: 🧠
 colorFrom: purple
 colorTo: red
@@ -11,13 +11,13 @@ pinned: false
 license: mit
 ---
 
-# 🧠 AGI/ASI Papers Analysis
+# 🧠 AI Papers Intelligence Classifier
 
-Analyze AI papers from [AI-Papers-of-the-Week](https://github.com/dair-ai/AI-Papers-of-the-Week) for AGI (Artificial General Intelligence), ASI (Artificial Super Intelligence), and ACI (Artificial Collective Intelligence) relevance with ranking, trend analysis, and comparison tools.
+Analyze AI papers from [AI-Papers-of-the-Week](https://github.com/dair-ai/AI-Papers-of-the-Week) across the intelligence spectrum: ANI (Artificial Narrow Intelligence), AGI (Artificial General Intelligence), ASI (Artificial Super Intelligence), ACI (Artificial Collective Intelligence), ML (Machine Learning), and DS (Data Science) with ranking, trend analysis, and comparison tools.
 
 ## 🎯 Purpose
 
-This tool helps researchers, students, and AI safety enthusiasts track and analyze AGI/ASI/ACI research developments by automatically classifying and ranking AI papers from the weekly AI-Papers-of-the-Week newsletter.
+This tool helps researchers, students, and AI enthusiasts track and analyze AI research developments across the entire intelligence spectrum by automatically classifying and ranking AI papers from the weekly AI-Papers-of-the-Week newsletter.
 
 ## 🚀 Features
 
@@ -39,21 +39,23 @@ This tool helps researchers, students, and AI safety enthusiasts track and analy
   - Relevance vs novelty scatter plot
 
 ### **Trend Analysis**
-- Track AGI/ASI/ACI research trends over time
+- Track AI research trends across the intelligence spectrum
 - Visualize relevance rates across weeks
-- Identify periods of high AGI/ASI/ACI activity
+- Identify periods of high activity in different AI domains
 - Compare research patterns across years
 
 ### **Classification System**
 - **ASI**: Direct focus on superintelligence and existential risk
 - **AGI**: Direct focus on general intelligence capabilities
 - **ACI**: Multi-agent systems and collective intelligence
-- **Narrow AI**: Specific domain AI without general intelligence
-- **Not Related**: No clear AGI/ASI/ACI connection
+- **ANI**: Artificial Narrow Intelligence and specialized AI systems
+- **Other AI**: General AI topics not fitting specific categories
+- **ML**: Machine Learning algorithms and techniques
+- **DS**: Data Science methodologies and applications
 
 ### **Ranking Methodology**
 Papers are ranked using a composite score:
-- **Relevance** (50%): AGI/ASI/ACI keyword density and semantic analysis
+- **Relevance** (50%): Keyword density and semantic analysis across all intelligence levels
 - **Novelty** (30%): Keyword diversity and innovation potential
 - **Impact** (20%): Classification level and potential impact
 
@@ -80,13 +82,7 @@ Papers are ranked using a composite score:
 - **[How It Works](HOW_IT_WORKS.md)** - Detailed technical explanation
 - **[Feature Ideas](FEATURES.md)** - Future enhancements and roadmap
 
-## 🏷️ AGI/ASI/ACI Keywords
-
-### AGI Keywords
-- General intelligence, AGI, human-level AI
-- Transfer learning, few-shot learning, meta-learning
-- Reasoning systems, commonsense reasoning
-- Neural-symbolic integration, multi-modal learning
+## 🏷️ Intelligence Level Keywords
 
 ### ASI Keywords
 - Superintelligence, ASI, existential risk
@@ -94,11 +90,41 @@ Papers are ranked using a composite score:
 - Recursive self-improvement, intelligence explosion
 - Singularity, transformative AI
 
+### AGI Keywords
+- General intelligence, AGI, human-level AI
+- Transfer learning, few-shot learning, meta-learning
+- Reasoning systems, commonsense reasoning
+- Neural-symbolic integration, multi-modal learning
+
 ### ACI Keywords
 - Multi-agent systems, swarm intelligence
 - Collective intelligence, collaborative AI
 - Distributed cognition, emergent behavior
 - Human-AI collaboration, agent coordination
+
+### ANI Keywords
+- Narrow AI, specialized AI, task-specific AI
+- Domain-specific systems, expert systems
+- Single-purpose AI, focused AI applications
+- Specialized neural networks, task optimization
+
+### Other AI Keywords
+- Artificial intelligence, AI research
+- AI applications, AI systems
+- Computer vision, NLP, speech recognition
+- Robotics, autonomous systems
+
+### ML Keywords
+- Machine learning, deep learning
+- Neural networks, CNN, RNN, Transformer
+- Supervised learning, unsupervised learning
+- Reinforcement learning, feature engineering
+
+### DS Keywords
+- Data science, data analysis
+- Data mining, big data
+- Statistical analysis, data visualization
+- Data engineering, data pipelines
 
 ## 🚀 Quick Start
 
@@ -174,12 +200,12 @@ See [Deployment Guide](DEPLOYMENT.md) for AWS, GCP, Azure, and Heroku instructio
 ## 🎓 Educational Purpose
 
 This project is created for **educational purposes only** to demonstrate:
-- AGI/ASI/ACI research tracking and analysis
+- AI research tracking and analysis across the intelligence spectrum
 - Natural language processing for paper classification
 - Data visualization for research trends
 - Modern web application development with Gradio
 
-The tool helps researchers and students understand the landscape of AGI/ASI/ACI research and track developments in this important field.
+The tool helps researchers and students understand the landscape of AI research and track developments across all intelligence levels from narrow AI to superintelligence.
 
 ## 📚 Data Source
 
