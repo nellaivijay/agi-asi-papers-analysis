@@ -18,7 +18,7 @@ def test_get_available_models():
     manager = ModelManager()
     models = manager.get_available_models()
     
-    assert len(models) == 9  # Updated to include all new models
+    assert len(models) == 10  # Updated to include all new models + DeepSeek
     model_ids = [m["id"] for m in models]
     assert "keyword" in model_ids
     assert "openai" in model_ids
@@ -29,6 +29,7 @@ def test_get_available_models():
     assert "google" in model_ids
     assert "together" in model_ids
     assert "replicate" in model_ids
+    assert "deepseek" in model_ids
 
 
 def test_set_model():

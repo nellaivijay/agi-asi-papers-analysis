@@ -23,7 +23,7 @@ def test_rank_papers():
         {
             'title': 'High Impact Paper',
             'classification_result': {
-                'classification': 'Core AGI/ASI',
+                'classification': 'AGI',
                 'combined_score': 90,
                 'matched_agi_keywords': ['AGI', 'general intelligence'],
                 'matched_asi_keywords': [],
@@ -57,7 +57,7 @@ def test_calculate_ranking_scores():
     
     paper = {
         'classification_result': {
-            'classification': 'Core AGI/ASI',
+            'classification': 'AGI',
             'combined_score': 80,
             'matched_agi_keywords': ['AGI'],
             'matched_asi_keywords': [],
@@ -97,14 +97,14 @@ def test_calculate_impact_score():
     
     core_paper = {
         'classification_result': {
-            'classification': 'Core AGI/ASI',
+            'classification': 'ASI',
             'matched_asi_keywords': ['AI safety', 'alignment']
         }
     }
     
     impact_score = ranker.calculate_impact_score(core_paper)
     
-    assert impact_score >= 70  # Core papers should have high impact
+    assert impact_score >= 70  # ASI papers should have high impact
 
 
 def test_get_top_papers():
@@ -115,7 +115,7 @@ def test_get_top_papers():
         {
             'title': f'Paper {i}',
             'classification_result': {
-                'classification': 'Core AGI/ASI' if i < 5 else 'Not Related',
+                'classification': 'AGI' if i < 5 else 'Not Related',
                 'combined_score': 100 - i * 10,
                 'matched_agi_keywords': [],
                 'matched_asi_keywords': [],
@@ -137,20 +137,24 @@ def test_filter_by_classification():
     
     papers = [
         {
-            'classification_result': {'classification': 'Core AGI/ASI'}
+            'classification_result': {'classification': 'AGI'}
         },
         {
-            'classification_result': {'classification': 'Strongly Related'}
+            'classification_result': {'classification': 'ASI'}
         },
         {
-            'classification_result': {'classification': 'Tangentially Related'}
+            'classification_result': {'classification': 'ACI'}
+        },
+        {
+            'classification_result': {'classification': 'Narrow AI'}
         },
         {
             'classification_result': {'classification': 'Not Related'}
         }
     ]
     
-    filtered = ranker.filter_by_classification(papers, min_level='Strongly Related')
+    # Filter for AGI level and above (AGI, ASI)
+    filtered = ranker.filter_by_classification(papers, min_level='AGI')
     
     assert len(filtered) == 2
-    assert all(p['classification_result']['classification'] in ['Core AGI/ASI', 'Strongly Related'] for p in filtered)
+    assert all(p['classification_result']['classification'] in ['AGI', 'ASI'] for p in filtered)

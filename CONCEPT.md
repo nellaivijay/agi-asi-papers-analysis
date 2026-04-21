@@ -4,11 +4,11 @@ This guide explains the concepts, methodology, and technical architecture behind
 
 ## 🎓 Educational Purpose
 
-This tool demonstrates how to build an AI-powered research analysis system for tracking AGI (Artificial General Intelligence) and ASI (Artificial Super Intelligence) research trends.
+This tool demonstrates how to build an AI-powered research analysis system for tracking AGI (Artificial General Intelligence), ASI (Artificial Super Intelligence), and ACI (Artificial Collective Intelligence) research trends.
 
 ## Core Concepts
 
-### 1. AGI vs ASI
+### 1. AGI vs ASI vs ACI
 
 **AGI (Artificial General Intelligence)**
 - AI systems with human-level cognitive abilities across diverse domains
@@ -20,19 +20,29 @@ This tool demonstrates how to build an AI-powered research analysis system for t
 - Associated with existential risk, alignment problems, and safety concerns
 - Key topics: AI safety, alignment, superintelligence, singularity
 
+**ACI (Artificial Collective Intelligence)**
+- AI systems that demonstrate emergent intelligence through multi-agent collaboration
+- Focus on swarm intelligence, human-AI collaboration, and distributed cognition
+- Key topics: multi-agent systems, swarm intelligence, collaborative AI
+
 ### 2. Research Analysis Methodology
 
 The tool uses a hybrid approach combining:
 
 **Keyword-Based Analysis**
 - Fast pattern matching against curated keyword lists
-- Identifies papers mentioning AGI/ASI concepts
+- Identifies papers mentioning AGI/ASI/ACI concepts
 - Provides baseline classification
 
 **Semantic Analysis (Optional)**
 - Uses AI models for deeper understanding
 - Captures nuance and context beyond keywords
 - Enhances classification accuracy
+
+**Reasoning-Based Classification (New)**
+- Uses DeepSeek-R1 with Chain of Thought reasoning
+- Provides detailed analysis and confidence scores
+- More accurate classification of complex papers
 
 **Multi-Criteria Ranking**
 - Combines relevance, novelty, and impact scores
@@ -41,14 +51,15 @@ The tool uses a hybrid approach combining:
 
 ### 3. Classification System
 
-Papers are classified into four levels:
+Papers are classified into five levels:
 
-| Level | Criteria | Description |
-|-------|----------|-------------|
-| Core AGI/ASI | 3+ core keywords | Direct focus on AGI/ASI topics |
-| Strongly Related | 2 core keywords | Significant AGI/ASI implications |
-| Tangentially Related | 1+ keywords or 4+ related keywords | Some AGI/ASI relevance |
-| Not Related | No significant matches | No clear AGI/ASI connection |
+|| Level | Criteria | Description |
+||-------|----------|-------------|
+|| ASI | 3+ ASI keywords or highest-level reasoning | Direct focus on superintelligence and existential risk |
+|| AGI | 3+ AGI keywords or high-level reasoning | Direct focus on general intelligence capabilities |
+|| ACI | 3+ ACI keywords or collective intelligence focus | Multi-agent systems and swarm intelligence |
+|| Narrow AI | 1-2 core keywords or 4+ related keywords | Specific domain AI without general intelligence |
+|| Not Related | No significant matches | No clear AGI/ASI/ACI connection |
 
 ### 4. Ranking Algorithm
 
@@ -89,12 +100,13 @@ Composite = (Relevance × 0.5) + (Novelty × 0.3) + (Impact × 0.2)
 ┌─────────────────────────────────────────────────────────┐
 │                  Model Manager                           │
 │  (Keyword | OpenAI | Anthropic | Ollama | Hugging Face)  │
+│  (DeepSeek-R1 Reasoning)                                │
 └────────────────────────┬────────────────────────────────┘
                          │
                          ▼
 ┌─────────────────────────────────────────────────────────┐
 │                   AGI/ASI Classifier                      │
-│  (Keyword Analysis + Semantic Analysis)                   │
+│  (Keyword Analysis + Semantic Analysis + Reasoning)      │
 └────────────────────────┬────────────────────────────────┘
                          │
                          ▼
@@ -122,13 +134,33 @@ Composite = (Relevance × 0.5) + (Novelty × 0.3) + (Impact × 0.2)
 
 The tool supports multiple analysis models:
 
-| Model | Use Case | Pros | Cons |
-|-------|----------|------|------|
-| Keyword | Quick screening | Fast, free, no setup | Limited understanding |
-| OpenAI GPT | Deep analysis | Best semantic understanding | Paid, requires API key |
-| Anthropic Claude | Complex papers | Excellent reasoning | Paid, requires API key |
-| Ollama | Privacy-focused | Free, local, private | Slower, requires setup |
-| Hugging Face | Budget-friendly | Free tier, good quality | Rate limits, API key |
+|| Model | Use Case | Pros | Cons |
+||-------|----------|------|------|
+|| Keyword | Quick screening | Fast, free, no setup | Limited understanding |
+|| OpenAI GPT | Deep analysis | Best semantic understanding | Paid, requires API key |
+|| Anthropic Claude | Complex papers | Excellent reasoning | Paid, requires API key |
+|| Ollama | Privacy-focused | Free, local, private | Slower, requires setup |
+|| Hugging Face | Budget-friendly | Free tier, good quality | Rate limits, API key |
+|| DeepSeek-R1 | Reasoning classification | Chain of thought, accurate | Medium speed, requires HF |
+
+### Classification Modes
+
+The tool supports three classification modes:
+
+**Keyword Mode**
+- Fast keyword-based classification
+- No AI model calls
+- Best for high-volume screening
+
+**Reasoning Mode**
+- Full AI reasoning classification using DeepSeek-R1
+- Chain of thought analysis
+- Most accurate but slower
+
+**Hybrid Mode**
+- Keyword classification first
+- AI reasoning for top candidates
+- Balanced speed and accuracy
 
 ## Keyword Strategy
 
@@ -146,6 +178,13 @@ Focus on superintelligence and safety:
 - "recursive self-improvement", "singularity"
 - "AI control problem", "beneficial AI"
 
+### ACI Keywords
+Focus on collective intelligence:
+- "multi-agent systems", "swarm intelligence"
+- "collective intelligence", "collaborative AI"
+- "distributed cognition", "emergent behavior"
+- "human-AI collaboration", "agent coordination"
+
 ### Related Keywords
 Contextual AI research terms:
 - "deep learning", "neural networks", "LLM"
@@ -156,7 +195,7 @@ Contextual AI research terms:
 
 ### Classification Distribution (Pie Chart)
 - Shows proportion of papers in each classification level
-- Helps understand overall AGI/ASI relevance
+- Helps understand overall AGI/ASI/ACI relevance
 
 ### Ranking Scores (Bar Chart)
 - Compares final rank vs combined relevance scores
@@ -168,22 +207,24 @@ Contextual AI research terms:
 - Helps identify novel, high-relevance research
 
 ### Trend Analysis (Line Chart)
-- Tracks AGI/ASI research patterns over time
+- Tracks AGI/ASI/ACI research patterns over time
 - Shows relevance rate changes across weeks
-- Identifies periods of high AGI/ASI activity
+- Identifies periods of high AGI/ASI/ACI activity
 
 ## Performance Considerations
 
 ### Speed vs Accuracy Trade-off
 
-| Mode | Speed | Accuracy | Best For |
-|------|-------|----------|----------|
-| Keyword Only | ⚡⚡⚡ | ⭐⭐ | High-volume screening |
-| Semantic + Keyword | ⚡ | ⭐⭐⭐⭐⭐ | Deep analysis |
+|| Mode | Speed | Accuracy | Best For |
+||------|-------|----------|----------|
+|| Keyword Only | ⚡⚡⚡ | ⭐⭐ | High-volume screening |
+|| Reasoning Only | ⚡ | ⭐⭐⭐⭐⭐ | Deep analysis |
+|| Hybrid | ⚡⚡ | ⭐⭐⭐⭐ | Balanced approach |
 
 ### Caching Strategy
 - Year-level data cached for 1 hour
-- Reduces API calls to GitHub
+- Classification results cached for 24 hours
+- Reduces API calls to GitHub and AI models
 - Improves response time
 
 ### Batch Processing
@@ -216,7 +257,7 @@ Potential improvements to consider:
 1. **Expanded Data Sources**: Include arXiv, conference proceedings
 2. **Custom Keyword Lists**: Allow users to define custom keywords
 3. **Citation Analysis**: Incorporate citation counts and impact metrics
-4. **Author Tracking**: Track researchers working on AGI/ASI topics
+4. **Author Tracking**: Track researchers working on AGI/ASI/ACI topics
 5. **Topic Modeling**: Use LDA or similar for topic discovery
 6. **Cross-Reference**: Link related papers across weeks
 7. **Alert System**: Notify users of high-relevance papers
@@ -232,12 +273,14 @@ This project demonstrates:
 4. **API Integration**: Working with GitHub and AI model APIs
 5. **Gradio Interfaces**: Building web-based ML tools
 6. **Research Analysis**: Techniques for academic paper analysis
+7. **Reasoning Systems**: Chain of thought classification
 
 ## References
 
 - [AI-Papers-of-the-Week](https://github.com/dair-ai/AI-Papers-of-the-Week) - Data source
 - [Gradio Documentation](https://gradio.app/docs/) - Interface framework
 - [Plotly Documentation](https://plotly.com/python/) - Visualization library
+- [DeepSeek-R1](https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-7B) - Reasoning model
 
 ---
 

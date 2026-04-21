@@ -14,18 +14,20 @@ from classifier import AGIASIClassifier
 from ranker import PaperRanker
 from model_manager import ModelManager
 from advanced_analyzer import AdvancedAnalyzer
+from reasoning_classifier import ReasoningClassifier
 
 
 # Initialize components
 fetcher = AIPapersFetcher()
 model_manager = ModelManager()
 classifier = AGIASIClassifier()
+reasoning_classifier = ReasoningClassifier()
 ranker = PaperRanker()
 advanced_analyzer = AdvancedAnalyzer()
 
 
 def analyze_week(year: str, week: str, model_id: str = "keyword", 
-                use_semantic: bool = False) -> tuple:
+                classification_mode: str = "keyword", use_semantic: bool = False) -> tuple:
     """
     Analyze papers from a specific week for AGI/ASI relevance
     
@@ -33,6 +35,7 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
         year: Year to analyze
         week: Week to analyze
         model_id: Model to use for analysis
+        classification_mode: Classification mode ('keyword', 'reasoning', 'hybrid')
         use_semantic: Whether to use semantic analysis
         
     Returns:
@@ -58,10 +61,54 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
         total_papers = len(papers)
         
         if total_papers == 0:
-            return f"No papers found for {week}", "", "", None, None
+            return f"No papers found for {week}", "", "", None, None, None, None, None, ""
         
-        # Classify papers
-        classified_papers = classifier.batch_classify(papers)
+        # Handle classification mode
+        if classification_mode == "reasoning":
+            # Use reasoning-based classification for all papers
+            classified_papers = []
+            for paper in papers:
+                reasoning_result = reasoning_classifier.classify_paper(paper)
+                # Convert reasoning result to classification format
+                classification_level = reasoning_result.get('category', 'Not Related')
+                paper['classification_result'] = {
+                    'classification': classification_level,
+                    'classification_reason': reasoning_result.get('analysis', ''),
+                    'agi_score': 0,
+                    'asi_score': 0,
+                    'aci_score': 0,
+                    'related_score': 0,
+                    'combined_score': reasoning_result.get('confidence_score', 0),
+                    'matched_agi_keywords': [],
+                    'matched_asi_keywords': [],
+                    'matched_aci_keywords': [],
+                    'matched_related_keywords': [],
+                    'semantic_analysis': reasoning_result
+                }
+                classified_papers.append(paper)
+        elif classification_mode == "hybrid":
+            # Use keyword classification first, then reasoning for top candidates
+            keyword_classified = classifier.batch_classify(papers)
+            # Get top 10 papers by keyword score
+            top_keyword = sorted(keyword_classified, 
+                                 key=lambda x: x['classification_result']['combined_score'], 
+                                 reverse=True)[:10]
+            
+            # Apply reasoning to top papers
+            for paper in keyword_classified:
+                if paper in top_keyword:
+                    reasoning_result = reasoning_classifier.classify_paper(paper)
+                    # Override with reasoning result if confidence is high
+                    if reasoning_result.get('confidence_score', 0) > 70:
+                        paper['classification_result']['classification'] = reasoning_result.get('category', paper['classification_result']['classification'])
+                        paper['classification_result']['classification_reason'] = reasoning_result.get('analysis', paper['classification_result']['classification_reason'])
+                        paper['classification_result']['combined_score'] = reasoning_result.get('confidence_score', paper['classification_result']['combined_score'])
+                        paper['classification_result']['semantic_analysis'] = reasoning_result
+            
+            classified_papers = keyword_classified
+        else:
+            # Use keyword classification (default)
+            classified_papers = classifier.batch_classify(papers)
         
         # Get statistics
         stats = classifier.get_statistics(classified_papers)
@@ -70,7 +117,7 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
         ranked_papers = ranker.rank_papers(classified_papers, criteria='composite')
         
         # Filter for AGI/ASI related papers
-        relevant_papers = ranker.filter_by_classification(ranked_papers, min_level='Tangentially Related')
+        relevant_papers = ranker.filter_by_classification(ranked_papers, min_level='Narrow AI')
         
         # Generate summary
         summary = generate_weekly_summary(year, week, total_papers, stats, relevant_papers, model_id, use_semantic)
@@ -100,10 +147,11 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
             # Add color-coded classification badge
             classification = paper['classification_result']['classification']
             classification_colors = {
-                'Core AGI/ASI': '#00D4AA',
-                'Strongly Related': '#7C3AED',
-                'Tangentially Related': '#F59E0B',
-                'Not Related': '#64748B'
+                'AGI': '#00D4AA',
+                'ASI': '#7C3AED',
+                'ACI': '#F59E0B',
+                'Narrow AI': '#64748B',
+                'Not Related': '#EF4444'
             }
             color = classification_colors.get(classification, '#64748B')
             classification_html = f'<span style="background-color: {color}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">{classification}</span>'
@@ -114,6 +162,7 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
                 'Classification': classification_html,
                 'AGI Score': paper['classification_result']['agi_score'],
                 'ASI Score': paper['classification_result']['asi_score'],
+                'ACI Score': paper['classification_result']['aci_score'],
                 'Combined Score': paper['classification_result']['combined_score'],
                 'Final Rank': paper.get('final_rank', 0),
                 'Model': semantic_info,
@@ -145,10 +194,11 @@ def generate_weekly_summary(year: str, week: str, total_papers: int,
     summary += f"## 📊 Overview\n\n"
     summary += f"- **Analysis Method**: {'Semantic AI (' + model_id + ')' if use_semantic else 'Keyword-Based'}\n"
     summary += f"- **Total Papers Analyzed**: {total_papers}\n"
-    summary += f"- **AGI/ASI Related Papers**: {stats['core_agi_asi'] + stats['strongly_related'] + stats['tangentially_related']}\n"
-    summary += f"- **Core AGI/ASI Papers**: {stats['core_agi_asi']}\n"
-    summary += f"- **Strongly Related**: {stats['strongly_related']}\n"
-    summary += f"- **Tangentially Related**: {stats['tangentially_related']}\n"
+    summary += f"- **AGI/ASI Related Papers**: {stats['agi'] + stats['asi'] + stats['aci']}\n"
+    summary += f"- **AGI Papers**: {stats['agi']}\n"
+    summary += f"- **ASI Papers**: {stats['asi']}\n"
+    summary += f"- **ACI Papers**: {stats['aci']}\n"
+    summary += f"- **Narrow AI Papers**: {stats['narrow_ai']}\n"
     summary += f"- **Not Related**: {stats['not_related']}\n"
     summary += f"- **Relevance Rate**: {stats['relevance_rate']}%\n\n"
     
@@ -172,9 +222,10 @@ def generate_statistics_text(stats: dict) -> str:
     """Generate statistics text"""
     text = "## 📈 Classification Statistics\n\n"
     text += f"- **Total Papers**: {stats['total']}\n"
-    text += f"- **Core AGI/ASI**: {stats['core_agi_asi']} ({stats['core_agi_asi']/stats['total']*100:.1f}%)\n"
-    text += f"- **Strongly Related**: {stats['strongly_related']} ({stats['strongly_related']/stats['total']*100:.1f}%)\n"
-    text += f"- **Tangentially Related**: {stats['tangentially_related']} ({stats['tangentially_related']/stats['total']*100:.1f}%)\n"
+    text += f"- **AGI**: {stats['agi']} ({stats['agi']/stats['total']*100:.1f}%)\n"
+    text += f"- **ASI**: {stats['asi']} ({stats['asi']/stats['total']*100:.1f}%)\n"
+    text += f"- **ACI**: {stats['aci']} ({stats['aci']/stats['total']*100:.1f}%)\n"
+    text += f"- **Narrow AI**: {stats['narrow_ai']} ({stats['narrow_ai']/stats['total']*100:.1f}%)\n"
     text += f"- **Not Related**: {stats['not_related']} ({stats['not_related']/stats['total']*100:.1f}%)\n"
     text += f"- **Overall Relevance Rate**: {stats['relevance_rate']}%\n\n"
     
@@ -216,12 +267,12 @@ def generate_top_papers_text(papers: list) -> str:
 
 def create_classification_chart(stats: dict) -> go.Figure:
     """Create a pie chart showing classification distribution"""
-    labels = ['Core AGI/ASI', 'Strongly Related', 'Tangentially Related', 'Not Related']
-    values = [stats['core_agi_asi'], stats['strongly_related'], 
-              stats['tangentially_related'], stats['not_related']]
+    labels = ['AGI', 'ASI', 'ACI', 'Narrow AI', 'Not Related']
+    values = [stats['agi'], stats['asi'], stats['aci'], 
+              stats['narrow_ai'], stats['not_related']]
     
     # Modern color palette
-    colors = ['#00D4AA', '#7C3AED', '#F59E0B', '#64748B']
+    colors = ['#00D4AA', '#7C3AED', '#F59E0B', '#64748B', '#EF4444']
     
     fig = go.Figure(data=[go.Pie(
         labels=labels,
@@ -350,10 +401,11 @@ def create_scatter_chart(ranked_papers: list) -> go.Figure:
     
     # Modern color palette for classifications
     color_map = {
-        'Core AGI/ASI': '#00D4AA',
-        'Strongly Related': '#7C3AED',
-        'Tangentially Related': '#F59E0B',
-        'Not Related': '#64748B'
+        'AGI': '#00D4AA',
+        'ASI': '#7C3AED',
+        'ACI': '#F59E0B',
+        'Narrow AI': '#64748B',
+        'Not Related': '#EF4444'
     }
     colors = [color_map.get(c, '#64748B') for c in classifications]
     
@@ -461,9 +513,10 @@ def analyze_trends(year: str) -> tuple:
                 weekly_stats.append({
                     'week': week,
                     'total': stats['total'],
-                    'core_agi_asi': stats['core_agi_asi'],
-                    'strongly_related': stats['strongly_related'],
-                    'tangentially_related': stats['tangentially_related'],
+                    'agi': stats['agi'],
+                    'asi': stats['asi'],
+                    'aci': stats['aci'],
+                    'narrow_ai': stats['narrow_ai'],
                     'relevance_rate': stats['relevance_rate']
                 })
         
@@ -490,7 +543,7 @@ def generate_trend_summary(year: str, weekly_stats: list) -> str:
     # Calculate overall statistics
     total_weeks = len(weekly_stats)
     total_papers = sum(w['total'] for w in weekly_stats)
-    total_agi_asi = sum(w['core_agi_asi'] + w['strongly_related'] for w in weekly_stats)
+    total_agi_asi = sum(w['agi'] + w['asi'] + w['aci'] for w in weekly_stats)
     avg_relevance_rate = sum(w['relevance_rate'] for w in weekly_stats) / total_weeks
     
     summary += f"## 📊 Overall Statistics\n\n"
@@ -500,12 +553,12 @@ def generate_trend_summary(year: str, weekly_stats: list) -> str:
     summary += f"- **Average Relevance Rate**: {avg_relevance_rate:.1f}%\n\n"
     
     # Find weeks with highest AGI/ASI activity
-    top_weeks = sorted(weekly_stats, key=lambda x: x['core_agi_asi'] + x['strongly_related'], reverse=True)[:3]
+    top_weeks = sorted(weekly_stats, key=lambda x: x['agi'] + x['asi'] + x['aci'], reverse=True)[:3]
     
     summary += f"## 🏆 Top Weeks for AGI/ASI Research\n\n"
     for i, week_stat in enumerate(top_weeks, 1):
         week_name = week_stat['week'].split(' - ')[0]
-        agi_asi_count = week_stat['core_agi_asi'] + week_stat['strongly_related']
+        agi_asi_count = week_stat['agi'] + week_stat['asi'] + week_stat['aci']
         summary += f"{i}. **{week_name}**: {agi_asi_count} AGI/ASI papers ({week_stat['relevance_rate']}% relevance)\n"
     
     summary += "\n"
@@ -517,7 +570,7 @@ def create_trend_chart(week_names: list, weekly_stats: list) -> go.Figure:
     """Create trend visualization chart"""
     # Prepare data
     relevance_rates = [w['relevance_rate'] for w in weekly_stats]
-    agi_asi_counts = [w['core_agi_asi'] + w['strongly_related'] for w in weekly_stats]
+    agi_asi_counts = [w['agi'] + w['asi'] + w['aci'] for w in weekly_stats]
     
     # Create figure with secondary y-axis
     fig = go.Figure()
@@ -695,6 +748,12 @@ def create_interface():
                         label="Analysis Model",
                         info="Select AI model for semantic analysis"
                     )
+                    classification_mode_selector = gr.Radio(
+                        choices=["keyword", "reasoning", "hybrid"],
+                        value="keyword",
+                        label="Classification Mode",
+                        info="keyword: Fast (<1s), reasoning: Accurate (5-10s), hybrid: Balanced"
+                    )
                     use_semantic = gr.Checkbox(
                         label="Enable Semantic Analysis",
                         value=False,
@@ -717,10 +776,10 @@ def create_interface():
                 
                 papers_df = gr.Dataframe(
             label="All Papers Ranking",
-            datatype=["number", "str", "markdown", "number", "number", "number", "number", "str", "markdown"],
+            datatype=["number", "str", "markdown", "number", "number", "number", "number", "number", "str", "markdown"],
             wrap=True,
-            column_widths=["80px", "400px", "150px", "80px", "80px", "80px", "80px", "100px", "120px"],
-            headers=["Rank", "Title", "Classification", "AGI Score", "ASI Score", "Combined Score", "Final Rank", "Model", "Links"],
+            column_widths=["80px", "400px", "150px", "80px", "80px", "80px", "80px", "80px", "100px", "120px"],
+            headers=["Rank", "Title", "Classification", "AGI Score", "ASI Score", "ACI Score", "Combined Score", "Final Rank", "Model", "Links"],
             interactive=False
         )
                 
@@ -735,7 +794,7 @@ def create_interface():
                 
                 analyze_btn.click(
                     analyze_week,
-                    inputs=[year_input, week_input, model_selector, use_semantic],
+                    inputs=[year_input, week_input, model_selector, classification_mode_selector, use_semantic],
                     outputs=[summary_output, stats_output, top_papers_output, papers_df, 
                              classification_chart_output, ranking_chart_output, scatter_chart_output, advanced_output]
                 )

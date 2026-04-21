@@ -140,9 +140,10 @@ class PaperRanker:
         
         # Base score from classification level
         level_scores = {
-            'Core AGI/ASI': 90.0,
-            'Strongly Related': 70.0,
-            'Tangentially Related': 40.0,
+            'AGI': 90.0,
+            'ASI': 95.0,  # Highest impact
+            'ACI': 85.0,  # Emerging field, high potential
+            'Narrow AI': 40.0,
             'Not Related': 10.0
         }
         
@@ -152,7 +153,15 @@ class PaperRanker:
         asi_matches = len(classification.get('matched_asi_keywords', []))
         asi_bonus = min(asi_matches * 5.0, 10.0)
         
-        impact_score = min(base_score + asi_bonus, 100.0)
+        # Bonus for ACI keywords (emerging field potential)
+        aci_matches = len(classification.get('matched_aci_keywords', []))
+        aci_bonus = min(aci_matches * 5.0, 10.0)
+        
+        # Bonus for AGI keywords
+        agi_matches = len(classification.get('matched_agi_keywords', []))
+        agi_bonus = min(agi_matches * 5.0, 10.0)
+        
+        impact_score = min(base_score + asi_bonus + aci_bonus + agi_bonus, 100.0)
         
         return round(impact_score, 2)
     
@@ -173,7 +182,7 @@ class PaperRanker:
         return ranked[:top_n]
     
     def filter_by_classification(self, papers: List[Dict], 
-                                  min_level: str = 'Tangentially Related') -> List[Dict]:
+                                  min_level: str = 'Narrow AI') -> List[Dict]:
         """
         Filter papers by minimum classification level
         
@@ -186,9 +195,10 @@ class PaperRanker:
         """
         level_hierarchy = {
             'Not Related': 0,
-            'Tangentially Related': 1,
-            'Strongly Related': 2,
-            'Core AGI/ASI': 3
+            'Narrow AI': 1,
+            'ACI': 2,
+            'AGI': 3,
+            'ASI': 4  # Highest level
         }
         
         min_level_value = level_hierarchy.get(min_level, 0)

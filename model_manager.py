@@ -116,6 +116,16 @@ class ModelManager:
                     "mistralai/mixtral-8x7b-instruct-v0.1",
                     "stabilityai/stable-diffusion-xl-base-1.0"
                 ]
+            },
+            "deepseek": {
+                "name": "DeepSeek-R1",
+                "description": "DeepSeek-R1 with Chain of Thought reasoning for AGI/ASI/ACI classification",
+                "requires_api_key": False,
+                "cost": "Free (Hugging Face Inference)",
+                "speed": "Medium",
+                "accuracy": "Excellent",
+                "reasoning": True,
+                "model_id": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
             }
         }
     
@@ -129,7 +139,8 @@ class ModelManager:
                 "requires_api_key": config["requires_api_key"],
                 "cost": config["cost"],
                 "speed": config.get("speed", "N/A"),
-                "accuracy": config.get("accuracy", "N/A")
+                "accuracy": config.get("accuracy", "N/A"),
+                "reasoning": config.get("reasoning", False)
             }
             for model_id, config in self.model_configs.items()
         ]
@@ -188,6 +199,8 @@ class ModelManager:
             return self._together_analysis(paper_data)
         elif model_id == "replicate":
             return self._replicate_analysis(paper_data)
+        elif model_id == "deepseek":
+            return self._deepseek_analysis(paper_data)
         else:
             return self._keyword_analysis(paper_data)
     
@@ -533,6 +546,60 @@ class ModelManager:
                 
         except Exception as e:
             print(f"Replicate analysis error: {e}")
+            return self._keyword_analysis(paper_data)
+    
+    def _deepseek_analysis(self, paper_data: Dict) -> Dict:
+        """Analyze using DeepSeek-R1 with Chain of Thought reasoning"""
+        try:
+            from huggingface_hub import InferenceClient
+            
+            model_id = self.model_configs["deepseek"]["model_id"]
+            client = InferenceClient(model_id)
+            
+            system_instruction = (
+                "You are an AI Research Scientist specializing in AGI, ASI, and ACI taxonomies. "
+                "Your task is to analyze research paper abstracts and categorize them.\n\n"
+                "CRITERIA:\n"
+                "- AGI (Artificial General Intelligence): Focus on cross-domain reasoning, System 2 thinking, and 'generality.'\n"
+                "- ASI (Artificial Superintelligence): Focus on recursive self-improvement, alignment at scale, and superhuman capabilities.\n"
+                "- ACI (Artificial Collective Intelligence): Focus on multi-agent systems, swarm intelligence, and human-AI collaboration.\n"
+                "- Narrow AI: Focus on specific, single-domain optimizations (e.g., just 'faster vision' or 'better LLM weights').\n\n"
+                "OUTPUT FORMAT (JSON):\n"
+                "{\n"
+                '  "category": "AGI | ASI | ACI | Narrow AI",\n'
+                '  "confidence_score": 0-100,\n'
+                '  "analysis": "A brief technical justification of why this fits the category based on architectural depth.",\n'
+                '  "aci_potential": "High/Low"\n'
+                "}\n"
+            )
+            
+            # Combine title and summary for analysis
+            title = paper_data.get('title', '')
+            summary = paper_data.get('summary', '')
+            user_input = f"Analyze this abstract: {title}. {summary}"
+            
+            response = client.chat_completion(
+                messages=[
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": user_input}
+                ],
+                max_tokens=500,
+                temperature=0.1
+            )
+            
+            content = response.choices[0].message.content
+            
+            # DeepSeek-R1 sometimes includes <think> tags; we strip them for JSON parsing
+            if "<think>" in content:
+                content = content.split("<think>")[-1].strip()
+            
+            import json
+            result = json.loads(content)
+            result["model_used"] = "deepseek"
+            return result
+            
+        except Exception as e:
+            print(f"DeepSeek analysis error: {e}")
             return self._keyword_analysis(paper_data)
     
     def batch_analyze(self, papers: List[Dict], model_id: Optional[str] = None) -> List[Dict]:

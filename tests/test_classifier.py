@@ -56,7 +56,7 @@ def test_classify_paper_agi():
     result = classifier.classify_paper(agi_paper)
     
     assert result['agi_score'] >= 1
-    assert result['classification'] in ['Core AGI/ASI', 'Strongly Related', 'Tangentially Related']
+    assert result['classification'] in ['AGI', 'ASI', 'ACI', 'Narrow AI']
 
 
 def test_classify_paper_asi():
@@ -72,7 +72,7 @@ def test_classify_paper_asi():
     result = classifier.classify_paper(asi_paper)
     
     assert result['asi_score'] >= 1
-    assert result['classification'] in ['Core AGI/ASI', 'Strongly Related', 'Tangentially Related']
+    assert result['classification'] in ['AGI', 'ASI', 'ACI', 'Narrow AI']
 
 
 def test_classify_paper_not_related():
@@ -110,18 +110,21 @@ def test_get_statistics():
     classifier = AGIASIClassifier()
     
     classified_papers = [
-        {'classification_result': {'classification': 'Core AGI/ASI'}},
-        {'classification_result': {'classification': 'Strongly Related'}},
+        {'classification_result': {'classification': 'AGI'}},
+        {'classification_result': {'classification': 'ASI'}},
+        {'classification_result': {'classification': 'ACI'}},
+        {'classification_result': {'classification': 'Narrow AI'}},
         {'classification_result': {'classification': 'Not Related'}},
     ]
     
     stats = classifier.get_statistics(classified_papers)
     
-    assert stats['total'] == 3
-    assert stats['core_agi_asi'] == 1
-    assert stats['strongly_related'] == 1
+    assert stats['total'] == 5
+    assert stats['asi'] == 1
+    assert stats['agi'] == 1
+    assert stats['aci'] == 1
+    assert stats['narrow_ai'] == 1
     assert stats['not_related'] == 1
-    assert stats['relevance_rate'] == 66.67
 
 
 def test_get_statistics_empty():
@@ -131,4 +134,8 @@ def test_get_statistics_empty():
     stats = classifier.get_statistics([])
     
     assert stats['total'] == 0
-    assert stats['core_agi_asi'] == 0
+    assert stats['asi'] == 0
+    assert stats['agi'] == 0
+    assert stats['aci'] == 0
+    assert stats['narrow_ai'] == 0
+    assert stats['not_related'] == 0

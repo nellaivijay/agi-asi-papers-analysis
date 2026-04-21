@@ -13,11 +13,11 @@ license: mit
 
 # 🧠 AGI/ASI Papers Analysis
 
-Analyze AI papers from [AI-Papers-of-the-Week](https://github.com/dair-ai/AI-Papers-of-the-Week) for AGI (Artificial General Intelligence) and ASI (Artificial Super Intelligence) relevance with ranking, trend analysis, and comparison tools.
+Analyze AI papers from [AI-Papers-of-the-Week](https://github.com/dair-ai/AI-Papers-of-the-Week) for AGI (Artificial General Intelligence), ASI (Artificial Super Intelligence), and ACI (Artificial Collective Intelligence) relevance with ranking, trend analysis, and comparison tools.
 
 ## 🎯 Purpose
 
-This tool helps researchers, students, and AI safety enthusiasts track and analyze AGI/ASI research developments by automatically classifying and ranking AI papers from the weekly AI-Papers-of-the-Week newsletter.
+This tool helps researchers, students, and AI safety enthusiasts track and analyze AGI/ASI/ACI research developments by automatically classifying and ranking AI papers from the weekly AI-Papers-of-the-Week newsletter.
 
 ## 🚀 Features
 
@@ -27,10 +27,11 @@ This tool helps researchers, students, and AI safety enthusiasts track and analy
 - **Anthropic Claude** (Paid): Sophisticated reasoning with Claude models
 - **Ollama** (Free, Local): Privacy-focused local models
 - **Hugging Face** (Free Tier): Access to open-source models
+- **DeepSeek-R1** (Free via HF): Chain-of-thought reasoning for accurate classification
 
 ### **Weekly Analysis**
 - Analyze papers from any week (2023-2026)
-- Hybrid classification (keyword + semantic analysis)
+- Three classification modes: Keyword, Reasoning, Hybrid
 - Multi-criteria ranking (relevance, novelty, impact)
 - Interactive visualizations:
   - Classification distribution pie chart
@@ -38,20 +39,21 @@ This tool helps researchers, students, and AI safety enthusiasts track and analy
   - Relevance vs novelty scatter plot
 
 ### **Trend Analysis**
-- Track AGI/ASI research trends over time
+- Track AGI/ASI/ACI research trends over time
 - Visualize relevance rates across weeks
-- Identify periods of high AGI/ASI activity
+- Identify periods of high AGI/ASI/ACI activity
 - Compare research patterns across years
 
 ### **Classification System**
-- **Core AGI/ASI**: Direct focus on AGI/ASI topics (3+ keyword matches)
-- **Strongly Related**: Significant AGI/ASI implications (2 keyword matches)
-- **Tangentially Related**: Some AGI/ASI relevance (1+ keyword matches)
-- **Not Related**: No clear AGI/ASI connection
+- **ASI**: Direct focus on superintelligence and existential risk
+- **AGI**: Direct focus on general intelligence capabilities
+- **ACI**: Multi-agent systems and collective intelligence
+- **Narrow AI**: Specific domain AI without general intelligence
+- **Not Related**: No clear AGI/ASI/ACI connection
 
 ### **Ranking Methodology**
 Papers are ranked using a composite score:
-- **Relevance** (50%): AGI/ASI keyword density and semantic analysis
+- **Relevance** (50%): AGI/ASI/ACI keyword density and semantic analysis
 - **Novelty** (30%): Keyword diversity and innovation potential
 - **Impact** (20%): Classification level and potential impact
 
@@ -63,11 +65,12 @@ Papers are ranked using a composite score:
 ## 📊 How It Works
 
 1. **Data Fetching**: Automatically fetches weekly reports from AI-Papers-of-the-Week GitHub repository
-2. **Model Selection**: Choose from keyword-based or AI-powered semantic analysis
-3. **Classification**: Uses keyword matching and/or AI models to identify AGI/ASI-related papers
-4. **Scoring**: Calculates relevance scores based on keyword density and semantic analysis
-5. **Ranking**: Ranks papers by composite score considering multiple criteria
-6. **Visualization**: Provides interactive charts and detailed insights
+2. **Model Selection**: Choose from keyword-based, AI-powered semantic analysis, or reasoning-based classification
+3. **Classification Mode**: Select Keyword (fast), Reasoning (accurate), or Hybrid (balanced)
+4. **Classification**: Uses keyword matching and/or AI models to identify AGI/ASI/ACI-related papers
+5. **Scoring**: Calculates relevance scores based on keyword density and semantic analysis
+6. **Ranking**: Ranks papers by composite score considering multiple criteria
+7. **Visualization**: Provides interactive charts and detailed insights
 
 ## 📚 Documentation
 
@@ -77,7 +80,7 @@ Papers are ranked using a composite score:
 - **[How It Works](HOW_IT_WORKS.md)** - Detailed technical explanation
 - **[Feature Ideas](FEATURES.md)** - Future enhancements and roadmap
 
-## 🏷️ AGI/ASI Keywords
+## 🏷️ AGI/ASI/ACI Keywords
 
 ### AGI Keywords
 - General intelligence, AGI, human-level AI
@@ -90,6 +93,12 @@ Papers are ranked using a composite score:
 - AI safety, alignment problem
 - Recursive self-improvement, intelligence explosion
 - Singularity, transformative AI
+
+### ACI Keywords
+- Multi-agent systems, swarm intelligence
+- Collective intelligence, collaborative AI
+- Distributed cognition, emergent behavior
+- Human-AI collaboration, agent coordination
 
 ## 🚀 Quick Start
 
@@ -165,12 +174,12 @@ See [Deployment Guide](DEPLOYMENT.md) for AWS, GCP, Azure, and Heroku instructio
 ## 🎓 Educational Purpose
 
 This project is created for **educational purposes only** to demonstrate:
-- AGI/ASI research tracking and analysis
+- AGI/ASI/ACI research tracking and analysis
 - Natural language processing for paper classification
 - Data visualization for research trends
 - Modern web application development with Gradio
 
-The tool helps researchers and students understand the landscape of AGI/ASI research and track developments in this important field.
+The tool helps researchers and students understand the landscape of AGI/ASI/ACI research and track developments in this important field.
 
 ## 📚 Data Source
 
@@ -180,9 +189,9 @@ All papers are sourced from the [AI-Papers-of-the-Week](https://github.com/dair-
 
 - **Frontend**: Gradio 4.0.0
 - **Backend**: Python 3.10
-- **Data Processing**: Pandas, NumPy
+- **Data Processing**: Pandas, NumPy, scikit-learn
 - **Visualization**: Plotly
-- **AI Models**: OpenAI, Anthropic, Ollama, Hugging Face
+- **AI Models**: OpenAI, Anthropic, Ollama, Hugging Face, DeepSeek-R1
 - **Data Source**: GitHub API (AI-Papers-of-the-Week)
 
 ## 🔗 Related Resources
