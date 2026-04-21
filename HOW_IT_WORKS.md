@@ -1,10 +1,10 @@
-# AGI/ASI Papers Analysis - How It Works
+# AI Papers Intelligence Classifier - How It Works
 
-This guide explains the inner workings of the AGI/ASI Papers Analysis tool, from data fetching to visualization.
+This guide explains the inner workings of the AI Papers Intelligence Classifier tool, from data fetching to visualization.
 
 ## 🎓 Educational Purpose
 
-This tool is created for educational purposes to demonstrate how to build an AI-powered research analysis system.
+This tool is created for educational purposes to demonstrate how to build an AI-powered research analysis system across the intelligence spectrum.
 
 ## System Overview
 

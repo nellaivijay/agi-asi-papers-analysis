@@ -1,3 +1,3 @@
 """
-Test suite for AGI/ASI Papers Analysis
+Test suite for AI Papers Intelligence Classifier
 """

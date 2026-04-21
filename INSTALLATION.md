@@ -1,10 +1,10 @@
-# AGI/ASI Papers Analysis - Installation Guide
+# AI Papers Intelligence Classifier - Installation Guide
 
-This guide will help you install and set up the AGI/ASI Papers Analysis tool on your local machine or development environment.
+This guide will help you install and set up the AI Papers Intelligence Classifier tool on your local machine or development environment.
 
 ## 🎓 Educational Purpose
 
-This tool is created for educational purposes to demonstrate AGI/ASI research tracking and analysis using modern AI techniques.
+This tool is created for educational purposes to demonstrate AI research tracking and analysis across the intelligence spectrum using modern AI techniques.
 
 ## Prerequisites
 

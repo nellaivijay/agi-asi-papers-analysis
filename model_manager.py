@@ -119,7 +119,7 @@ class ModelManager:
             },
             "deepseek": {
                 "name": "DeepSeek-R1",
-                "description": "DeepSeek-R1 with Chain of Thought reasoning for AGI/ASI/ACI classification",
+                "description": "DeepSeek-R1 with Chain of Thought reasoning for AI intelligence classification",
                 "requires_api_key": False,
                 "cost": "Free (Hugging Face Inference)",
                 "speed": "Medium",
@@ -231,7 +231,7 @@ class ModelManager:
             
             Provide:
             1. Semantic relevance score (0-100)
-            2. Key concepts related to AGI/ASI
+            2. Key concepts related to AI intelligence spectrum
             3. Brief reasoning
             
             Format as JSON with keys: semantic_relevance, key_concepts, reasoning
@@ -270,7 +270,7 @@ class ModelManager:
             
             Provide:
             1. Semantic relevance score (0-100)
-            2. Key concepts related to AGI/ASI
+            2. Key concepts related to AI intelligence spectrum
             3. Brief reasoning
             
             Format your response as JSON with keys: semantic_relevance, key_concepts, reasoning
@@ -303,7 +303,7 @@ class ModelManager:
             
             Provide:
             1. Semantic relevance score (0-100)
-            2. Key concepts related to AGI/ASI
+            2. Key concepts related to AI intelligence spectrum
             3. Brief reasoning
             
             Format as JSON with keys: semantic_relevance, key_concepts, reasoning
@@ -349,7 +349,7 @@ class ModelManager:
             
             Provide:
             1. Semantic relevance score (0-100)
-            2. Key concepts related to AGI/ASI
+            2. Key concepts related to AI intelligence spectrum
             3. Brief reasoning
             
             Format as JSON with keys: semantic_relevance, key_concepts, reasoning
@@ -392,7 +392,7 @@ class ModelManager:
             
             Provide:
             1. Semantic relevance score (0-100)
-            2. Key concepts related to AGI/ASI
+            2. Key concepts related to AI intelligence spectrum
             3. Brief reasoning
             
             Format your response as JSON with keys: semantic_relevance, key_concepts, reasoning
@@ -431,7 +431,7 @@ class ModelManager:
             
             Provide:
             1. Semantic relevance score (0-100)
-            2. Key concepts related to AGI/ASI
+            2. Key concepts related to AI intelligence spectrum
             3. Brief reasoning
             
             Format your response as JSON with keys: semantic_relevance, key_concepts, reasoning
@@ -466,7 +466,7 @@ class ModelManager:
             
             Provide:
             1. Semantic relevance score (0-100)
-            2. Key concepts related to AGI/ASI
+            2. Key concepts related to AI intelligence spectrum
             3. Brief reasoning
             
             Format as JSON with keys: semantic_relevance, key_concepts, reasoning
@@ -516,7 +516,7 @@ class ModelManager:
             
             Provide:
             1. Semantic relevance score (0-100)
-            2. Key concepts related to AGI/ASI
+            2. Key concepts related to AI intelligence spectrum
             3. Brief reasoning
             
             Format as JSON with keys: semantic_relevance, key_concepts, reasoning

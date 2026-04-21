@@ -1,6 +1,6 @@
 """
 Reasoning Classifier Module
-Uses DeepSeek-R1 with Chain of Thought for AGI/ASI/ACI/Narrow AI classification
+Uses DeepSeek-R1 with Chain of Thought for AI intelligence classification
 """
 
 import json

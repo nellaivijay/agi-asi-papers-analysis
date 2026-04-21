@@ -1,6 +1,6 @@
 """
 Advanced Analysis Module
-Provides additional analysis features for AGI/ASI papers
+Provides additional analysis features for AI papers across the intelligence spectrum
 """
 
 from typing import Dict, List

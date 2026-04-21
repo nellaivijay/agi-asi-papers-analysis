@@ -81,7 +81,7 @@ jobs:
     - name: Test app import
       run: |
         python -c "import app; print('App imports successfully')"
-        python -c "import classifier; print('Classifier imports successfully')"
+        python -c "from classifier import AIPapersIntelligenceClassifier; print('Classifier imports successfully')"
         python -c "import ranker; print('Ranker imports successfully')"
         python -c "import data_fetcher; print('Data fetcher imports successfully')"
         python -c "import model_manager; print('Model manager imports successfully')"

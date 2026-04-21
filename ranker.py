@@ -1,18 +1,18 @@
 """
 Paper Ranking Module
-Ranks papers by relevance, impact, and novelty for AGI/ASI research
+Ranks papers by relevance, impact, and novelty for AI research across the intelligence spectrum
 """
 
 from typing import Dict, List
 
 
 class PaperRanker:
-    """Rank papers by multiple criteria for AGI/ASI relevance"""
+    """Rank papers by multiple criteria for AI research across the intelligence spectrum"""
     
     def __init__(self):
         # Weights for different ranking criteria
         self.weights = {
-            'relevance': 0.5,      # AGI/ASI relevance score
+            'relevance': 0.5,      # Intelligence spectrum relevance score
             'novelty': 0.3,        # Novelty/innovation potential
             'impact': 0.2         # Potential impact
         }

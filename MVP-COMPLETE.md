@@ -1,8 +1,8 @@
-# AGI/ASI Papers Analysis - MVP Complete ✅
+# AI Papers Intelligence Classifier - MVP Complete ✅
 
 ## 🎉 **COMPLETE MVP BUILT SUCCESSFULLY!**
 
-I have built a complete, working MVP for the AGI/ASI Papers Analysis Space that analyzes AI papers from the AI-Papers-of-the-Week repository for AGI/ASI relevance.
+I have built a complete, working MVP for the AI Papers Intelligence Classifier that analyzes AI papers from the AI-Papers-of-the-Week repository across the intelligence spectrum.
 
 ## 📁 **Project Structure**
 

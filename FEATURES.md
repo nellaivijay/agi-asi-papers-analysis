@@ -1,10 +1,10 @@
-# AGI/ASI Papers Analysis - Feature Ideas and Enhancements
+# AI Papers Intelligence Classifier - Feature Ideas and Enhancements
 
-This document outlines potential future features and enhancements for the AGI/ASI Papers Analysis tool.
+This document outlines potential future features and enhancements for the AI Papers Intelligence Classifier tool.
 
 ## 🎓 Educational Purpose
 
-This tool is created for educational purposes to demonstrate AGI/ASI research tracking and analysis. These feature ideas represent potential learning opportunities and system improvements.
+This tool is created for educational purposes to demonstrate AI research tracking and analysis across the intelligence spectrum. These feature ideas represent potential learning opportunities and system improvements.
 
 ## Priority 1: Core Enhancements
 

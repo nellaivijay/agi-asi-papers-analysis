@@ -1,10 +1,10 @@
-# AGI/ASI Papers Analysis - Deployment Guide
+# AI Papers Intelligence Classifier - Deployment Guide
 
-This guide covers deployment options for the AGI/ASI Papers Analysis tool, including local deployment, cloud deployment, and Hugging Face Spaces.
+This guide covers deployment options for the AI Papers Intelligence Classifier tool, including local deployment, cloud deployment, and Hugging Face Spaces.
 
 ## 🎓 Educational Purpose
 
-This tool is created for educational purposes to demonstrate AGI/ASI research tracking and analysis deployment strategies.
+This tool is created for educational purposes to demonstrate AI research tracking and analysis deployment strategies across the intelligence spectrum.
 
 ## Deployment Options
 
