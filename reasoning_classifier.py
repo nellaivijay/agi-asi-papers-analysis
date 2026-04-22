@@ -96,8 +96,22 @@ class ReasoningClassifier:
         """
         try:
             from huggingface_hub import InferenceClient
+            import os
             
-            client = InferenceClient("deepseek-ai/DeepSeek-R1-Distill-Qwen-7B")
+            # Get API key from environment variable
+            api_key = os.getenv("HUGGINGFACE_API_KEY")
+            
+            # Debug: Check if API key is available
+            print(f"DEBUG: HUGGINGFACE_API_KEY found: {bool(api_key)}")
+            if not api_key:
+                print("DEBUG: HUGGINGFACE_API_KEY not set - will try without authentication (may fail)")
+            
+            # Initialize client with API key if available
+            if api_key:
+                client = InferenceClient("deepseek-ai/DeepSeek-R1-Distill-Qwen-7B", token=api_key)
+            else:
+                client = InferenceClient("deepseek-ai/DeepSeek-R1-Distill-Qwen-7B")
+            
             user_input = f"Analyze this abstract: {title}. {summary}"
             
             response = client.chat_completion(
@@ -139,14 +153,17 @@ class ReasoningClassifier:
             }
         except Exception as e:
             # API call failed, return error result
+            error_msg = str(e)
+            if "api_key" in error_msg.lower() or "api key" in error_msg.lower():
+                error_msg = "HUGGINGFACE_API_KEY not configured or invalid. Please configure it in Space Settings or use keyword mode instead."
             return {
                 'category': 'Error',
                 'confidence_score': 0,
-                'analysis': f'API error: {str(e)}',
+                'analysis': f'API error: {error_msg}',
                 'aci_potential': 'Unknown',
                 'model_used': 'deepseek-r1',
                 'classification_timestamp': datetime.now().isoformat(),
-                'error': str(e)
+                'error': error_msg
             }
     
     async def classify_paper_async(self, paper_data: Dict, use_cache: bool = True) -> Dict:
