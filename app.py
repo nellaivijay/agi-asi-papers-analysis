@@ -86,6 +86,10 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
                     'matched_agi_keywords': [],
                     'matched_asi_keywords': [],
                     'matched_aci_keywords': [],
+                    'matched_ani_keywords': [],  # Added missing key
+                    'matched_other_ai_keywords': [],  # Added missing key
+                    'matched_ml_keywords': [],  # Added missing key
+                    'matched_ds_keywords': [],  # Added missing key
                     'matched_related_keywords': [],
                     'semantic_analysis': reasoning_result
                 }
