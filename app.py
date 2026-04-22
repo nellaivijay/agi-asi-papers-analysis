@@ -41,6 +41,8 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
     Returns:
         Tuple of (summary_text, statistics_text, top_papers_text, dataframe, chart)
     """
+    print(f"DEBUG: analyze_week called with year={year}, week={week}, model_id={model_id}, classification_mode={classification_mode}, use_semantic={use_semantic}")
+    
     try:
         # Update classifier with selected model
         if use_semantic:
@@ -130,7 +132,13 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
         if classified_papers:
             first_paper = classified_papers[0]
             print(f"DEBUG: First paper title: {first_paper.get('title', 'Unknown')}")
-            print(f"DEBUG: First paper classification: {first_paper.get('classification_result', {})}")
+            print(f"DEBUG: First paper has classification_result: {'classification_result' in first_paper}")
+            if 'classification_result' in first_paper:
+                print(f"DEBUG: First paper classification: {first_paper.get('classification_result', {})}")
+            else:
+                print(f"DEBUG: First paper keys: {list(first_paper.keys())}")
+        else:
+            print("DEBUG: No classified papers found!")
         
         # Get statistics
         stats = classifier.get_statistics(classified_papers)
@@ -141,7 +149,14 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
         # Debug: Check first paper after ranking
         if ranked_papers:
             first_ranked = ranked_papers[0]
-            print(f"DEBUG: After ranking - First paper classification: {first_ranked.get('classification_result', {})}")
+            print(f"DEBUG: After ranking - First paper title: {first_ranked.get('title', 'Unknown')}")
+            print(f"DEBUG: After ranking - First paper has classification_result: {'classification_result' in first_ranked}")
+            if 'classification_result' in first_ranked:
+                print(f"DEBUG: After ranking - First paper classification: {first_ranked.get('classification_result', {})}")
+            else:
+                print(f"DEBUG: After ranking - First paper keys: {list(first_ranked.keys())}")
+        else:
+            print("DEBUG: No ranked papers found!")
         
         # Filter for AGI/ASI related papers
         relevant_papers = ranker.filter_by_classification(ranked_papers, min_level='Narrow AI')
