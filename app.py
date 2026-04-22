@@ -126,11 +126,22 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
             # Use keyword classification (default)
             classified_papers = classifier.batch_classify(papers)
         
+        # Debug: Check first paper classification
+        if classified_papers:
+            first_paper = classified_papers[0]
+            print(f"DEBUG: First paper title: {first_paper.get('title', 'Unknown')}")
+            print(f"DEBUG: First paper classification: {first_paper.get('classification_result', {})}")
+        
         # Get statistics
         stats = classifier.get_statistics(classified_papers)
         
         # Rank papers
         ranked_papers = ranker.rank_papers(classified_papers, criteria='composite')
+        
+        # Debug: Check first paper after ranking
+        if ranked_papers:
+            first_ranked = ranked_papers[0]
+            print(f"DEBUG: After ranking - First paper classification: {first_ranked.get('classification_result', {})}")
         
         # Filter for AGI/ASI related papers
         relevant_papers = ranker.filter_by_classification(ranked_papers, min_level='Narrow AI')
@@ -147,6 +158,17 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
         # Create dataframe for display
         df_data = []
         for paper in ranked_papers:
+            # Debug: Check if classification_result exists
+            if 'classification_result' not in paper:
+                print(f"DEBUG: Paper missing classification_result: {paper.get('title', 'Unknown')}")
+                continue
+                
+            classification_result = paper['classification_result']
+            if 'classification' not in classification_result:
+                print(f"DEBUG: Paper missing classification in result: {paper.get('title', 'Unknown')}")
+                print(f"DEBUG: classification_result keys: {list(classification_result.keys())}")
+                continue
+            
             semantic_info = ""
             if paper.get('semantic_analysis'):
                 semantic_info = f" ({paper['semantic_analysis'].get('model_used', 'N/A')})"
@@ -161,7 +183,7 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
             links_html = ' | '.join(filter(None, [paper_link_html, tweet_link_html]))
             
             # Add color-coded classification badge
-            classification = paper['classification_result']['classification']
+            classification = classification_result['classification']
             classification_colors = {
                 'ASI': '#7C3AED',
                 'AGI': '#00D4AA',
@@ -179,14 +201,14 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
                 'Rank': paper.get('rank_position', 0),
                 'Title': paper.get('title', 'Unknown'),  # Full title
                 'Classification': classification_html,
-                'ASI Score': paper['classification_result']['asi_score'],
-                'AGI Score': paper['classification_result']['agi_score'],
-                'ACI Score': paper['classification_result']['aci_score'],
-                'ANI Score': paper['classification_result']['ani_score'],
-                'Other AI Score': paper['classification_result']['other_ai_score'],
-                'ML Score': paper['classification_result']['ml_score'],
-                'DS Score': paper['classification_result']['ds_score'],
-                'Combined Score': paper['classification_result']['combined_score'],
+                'ASI Score': classification_result.get('asi_score', 0),
+                'AGI Score': classification_result.get('agi_score', 0),
+                'ACI Score': classification_result.get('aci_score', 0),
+                'ANI Score': classification_result.get('ani_score', 0),
+                'Other AI Score': classification_result.get('other_ai_score', 0),
+                'ML Score': classification_result.get('ml_score', 0),
+                'DS Score': classification_result.get('ds_score', 0),
+                'Combined Score': classification_result.get('combined_score', 0),
                 'Final Rank': paper.get('final_rank', 0),
                 'Model': semantic_info,
                 'Links': links_html
@@ -267,10 +289,18 @@ def generate_top_papers_text(papers: list) -> str:
     
     for i, paper in enumerate(papers, 1):
         title = paper.get('title', 'Unknown')
-        classification = paper['classification_result']['classification']
-        agi_score = paper['classification_result']['agi_score']
-        asi_score = paper['classification_result']['asi_score']
-        combined_score = paper['classification_result']['combined_score']
+        
+        # Defensive: Check if classification_result exists
+        if 'classification_result' not in paper:
+            text += f"### {i}. {title}\n"
+            text += "- **Classification**: Error - Missing classification result\n\n"
+            continue
+            
+        classification_result = paper['classification_result']
+        classification = classification_result.get('classification', 'Error')
+        agi_score = classification_result.get('agi_score', 0)
+        asi_score = classification_result.get('asi_score', 0)
+        combined_score = classification_result.get('combined_score', 0)
         final_rank = paper.get('final_rank', 0)
         
         # Get links
