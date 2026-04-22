@@ -9,6 +9,7 @@ from typing import Dict, List, Optional
 from datetime import datetime, timedelta
 from functools import lru_cache
 import hashlib
+import re
 
 
 class ReasoningClassifier:
@@ -33,6 +34,48 @@ class ReasoningClassifier:
             '  "aci_potential": "High/Low"\n'
             "}\n"
         )
+    
+    def _construct_fallback_response(self, content: str) -> Optional[Dict]:
+        """
+        Construct a fallback response from incomplete JSON by extracting available information
+        
+        Args:
+            content: The content that failed JSON parsing
+            
+        Returns:
+            Dictionary with extracted information or None if extraction fails
+        """
+        try:
+            # Try to extract category
+            category_match = re.search(r'"category"\s*:\s*"([^"]+)"', content)
+            category = category_match.group(1) if category_match else "Unknown"
+            
+            # Try to extract confidence score
+            confidence_match = re.search(r'"confidence_score"\s*:\s*(\d+)', content)
+            confidence = int(confidence_match.group(1)) if confidence_match else 50
+            
+            # Try to extract analysis (partial)
+            analysis_match = re.search(r'"analysis"\s*:\s*"([^"]*)', content)
+            analysis = analysis_match.group(1) if analysis_match else "Could not extract full analysis"
+            
+            # Try to extract ACI potential
+            aci_match = re.search(r'"aci_potential"\s*:\s*"([^"]+)"', content)
+            aci_potential = aci_match.group(1) if aci_match else "Unknown"
+            
+            print(f"DEBUG: Fallback extraction - category: {category}, confidence: {confidence}")
+            
+            return {
+                'category': category,
+                'confidence_score': confidence,
+                'analysis': analysis + " (Extracted from incomplete response)",
+                'aci_potential': aci_potential,
+                'model_used': 'deepseek-r1',
+                'classification_timestamp': datetime.now().isoformat(),
+                'fallback': True
+            }
+        except Exception as e:
+            print(f"DEBUG: Fallback extraction failed: {e}")
+            return None
     
     def _get_cache_key(self, title: str, summary: str) -> str:
         """Generate cache key from paper content"""
@@ -119,7 +162,7 @@ class ReasoningClassifier:
                     {"role": "system", "content": self.system_instruction},
                     {"role": "user", "content": user_input}
                 ],
-                max_tokens=500,
+                max_tokens=1000,
                 temperature=0.1
             )
             
@@ -165,21 +208,35 @@ class ReasoningClassifier:
                 print(f"DEBUG: Attempting to extract JSON from mixed content")
                 
                 # Try to find JSON-like structure
-                import re
-                json_pattern = r'\{[^{}]*"[^"]+"\s*:\s*[^{}]*\}'
+                # Improved regex pattern to handle nested structures
+                json_pattern = r'\{(?:[^{}]|(?:\{[^{}]*\}))*\}'
                 matches = re.findall(json_pattern, content, re.DOTALL)
                 
                 if matches:
+                    # Try the largest match first (most likely to be complete)
+                    matches.sort(key=len, reverse=True)
                     for match in matches:
                         try:
                             result = json.loads(match)
                             print(f"DEBUG: Successfully extracted JSON from mixed content")
+                            print(f"DEBUG: Extracted JSON length: {len(match)}")
                             break
                         except:
                             continue
                     else:
+                        # If all matches fail, try to construct a minimal valid response
+                        print(f"DEBUG: All JSON matches failed, attempting fallback")
+                        # Try to extract category and confidence from text
+                        fallback_result = self._construct_fallback_response(content)
+                        if fallback_result:
+                            return fallback_result
                         raise e
                 else:
+                    print(f"DEBUG: No JSON patterns found in content")
+                    # Try to construct a minimal valid response
+                    fallback_result = self._construct_fallback_response(content)
+                    if fallback_result:
+                        return fallback_result
                     raise e
             
             # Add metadata
@@ -190,6 +247,7 @@ class ReasoningClassifier:
             
         except json.JSONDecodeError as e:
             # JSON parsing failed, return error result
+            print(f"DEBUG: Final JSON parsing error: {e}")
             return {
                 'category': 'Error',
                 'confidence_score': 0,
@@ -202,6 +260,7 @@ class ReasoningClassifier:
         except Exception as e:
             # API call failed, return error result
             error_msg = str(e)
+            print(f"DEBUG: General exception: {error_msg}")
             if "api_key" in error_msg.lower() or "api key" in error_msg.lower():
                 error_msg = "HUGGINGFACE_API_KEY not configured or invalid. Please configure it in Space Settings or use keyword mode instead."
             return {
