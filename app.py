@@ -53,12 +53,20 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
         # Fetch data
         year_data = fetcher.fetch_year_data(year)
         if not year_data or week not in year_data:
-            error_msg = f"No data found for {year}, week: {week}"
-            return error_msg, "", "", None, None
+            available_weeks = list(year_data.keys()) if year_data else []
+            error_msg = f"No data found for {year}, week: {week}. Available weeks: {available_weeks[:5]}..."
+            return error_msg, "", "", None, None, None, None, ""
         
         week_info = year_data[week]
         papers = week_info['papers']
         total_papers = len(papers)
+        
+        # Debug: Check if papers have required fields
+        if total_papers > 0:
+            first_paper = papers[0]
+            if 'title' not in first_paper or 'summary' not in first_paper:
+                error_msg = f"Paper data structure error. Paper fields: {list(first_paper.keys())}"
+                return error_msg, "", "", None, None, None, None, ""
         
         if total_papers == 0:
             return f"No papers found for {week}", "", "", None, None, None, None, None, ""
