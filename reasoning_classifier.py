@@ -125,21 +125,62 @@ class ReasoningClassifier:
             
             content = response.choices[0].message.content
             
+            # Debug: Log raw response
+            print(f"DEBUG: Raw model response length: {len(content)}")
+            print(f"DEBUG: Raw response preview: {content[:200]}")
+            
             # Strip CoT tags if present (DeepSeek-R1 uses specific tags)
             try:
                 # Try to extract content between reasoning tags if present
-                if "<think>" in content and "</think>" in content:
-                    # Extract content after the thinking tag
-                    content = content.split("</think>")[-1].strip()
-                elif "<|begin_of_thought|>" in content and "<|end_of_thought|>" in content:
+                if "<|begin_of_thought|>" in content and "<|end_of_thought|>" in content:
                     # DeepSeek specific tags
                     content = content.split("<|end_of_thought|>")[-1].strip()
-            except:
+                elif "```json" in content:
+                    # Extract JSON from code block
+                    content = content.split("```json")[-1].split("```")[0].strip()
+                elif "```" in content:
+                    # Extract from any code block
+                    content = content.split("```")[-1].split("```")[0].strip()
+                # Handle Chinese/Unicode CoT tags by looking for JSON pattern
+                elif "{" in content and "}" in content:
+                    # Try to extract just the JSON part
+                    start_idx = content.find("{")
+                    end_idx = content.rfind("}") + 1
+                    if start_idx != -1 and end_idx > start_idx:
+                        content = content[start_idx:end_idx]
+                
+                print(f"DEBUG: Content after tag stripping length: {len(content)}")
+                print(f"DEBUG: Content preview: {content[:200]}")
+            except Exception as e:
                 # If tag stripping fails, use content as-is
+                print(f"DEBUG: Tag stripping failed: {e}, using raw content")
                 pass
             
             # Try to parse JSON response
-            result = json.loads(content)
+            try:
+                result = json.loads(content)
+            except json.JSONDecodeError as e:
+                # Try to extract JSON from mixed content
+                print(f"DEBUG: Initial JSON parse failed: {e}")
+                print(f"DEBUG: Attempting to extract JSON from mixed content")
+                
+                # Try to find JSON-like structure
+                import re
+                json_pattern = r'\{[^{}]*"[^"]+"\s*:\s*[^{}]*\}'
+                matches = re.findall(json_pattern, content, re.DOTALL)
+                
+                if matches:
+                    for match in matches:
+                        try:
+                            result = json.loads(match)
+                            print(f"DEBUG: Successfully extracted JSON from mixed content")
+                            break
+                        except:
+                            continue
+                    else:
+                        raise e
+                else:
+                    raise e
             
             # Add metadata
             result['model_used'] = 'deepseek-r1'
