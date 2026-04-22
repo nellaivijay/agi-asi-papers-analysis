@@ -76,6 +76,17 @@ Papers are ranked using a composite score:
 
 ## 📚 Documentation
 
+### Project Planning (Spec-Driven Development)
+This project follows a Spec-Driven Development approach. Planning documents are available in the `.planning/` directory:
+
+- **[PROJECT.md](.planning/PROJECT.md)** - Project vision, scope, and objectives
+- **[REQUIREMENTS.md](.planning/REQUIREMENTS.md)** - Detailed functional and non-functional requirements
+- **[ROADMAP.md](.planning/ROADMAP.md)** - Implementation phases and milestones
+- **[STATE.md](.planning/STATE.md)** - Current project state and progress
+- **[CONTEXT.md](.planning/CONTEXT.md)** - Background and project context
+- **[RESEARCH.md](.planning/RESEARCH.md)** - Research findings and technical decisions
+
+### Technical Documentation
 - **[Installation Guide](INSTALLATION.md)** - Step-by-step setup instructions
 - **[Deployment Guide](DEPLOYMENT.md)** - Deployment options (Hugging Face, Docker, Cloud)
 - **[Concept Guide](CONCEPT.md)** - System architecture and methodology
