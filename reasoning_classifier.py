@@ -125,13 +125,20 @@ class ReasoningClassifier:
             
             content = response.choices[0].message.content
             
-            # Strip CoT tags if present
-            cot_tags = ["", ""]
-            for tag in cot_tags:
-                if tag in content:
-                    content = content.split(tag)[-1].strip()
+            # Strip CoT tags if present (DeepSeek-R1 uses specific tags)
+            try:
+                # Try to extract content between reasoning tags if present
+                if "<think>" in content and "</think>" in content:
+                    # Extract content after the thinking tag
+                    content = content.split("</think>")[-1].strip()
+                elif "<|begin_of_thought|>" in content and "<|end_of_thought|>" in content:
+                    # DeepSeek specific tags
+                    content = content.split("<|end_of_thought|>")[-1].strip()
+            except:
+                # If tag stripping fails, use content as-is
+                pass
             
-            # Parse JSON response
+            # Try to parse JSON response
             result = json.loads(content)
             
             # Add metadata
