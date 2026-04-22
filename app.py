@@ -77,7 +77,11 @@ def analyze_week(year: str, week: str, model_id: str = "keyword",
                     'agi_score': 0,
                     'asi_score': 0,
                     'aci_score': 0,
+                    'ani_score': 0,  # Added missing key
                     'related_score': 0,
+                    'other_ai_score': 0,  # Added missing key
+                    'ml_score': 0,  # Added missing key
+                    'ds_score': 0,  # Added missing key
                     'combined_score': reasoning_result.get('confidence_score', 0),
                     'matched_agi_keywords': [],
                     'matched_asi_keywords': [],
